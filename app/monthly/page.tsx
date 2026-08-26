@@ -1,5 +1,9 @@
-const TOTAL_SPENT = 1284300;
-const LAST_MONTH_SAME_PERIOD = 1151900;
+import {
+  getCurrentMonthTotal,
+  getLastMonthSamePeriodTotal,
+} from "@/app/lib/summary";
+
+export const dynamic = "force-dynamic";
 
 const TOP_MERCHANTS = [
   { name: "쿠팡", amount: 158900 },
@@ -21,8 +25,12 @@ function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
 }
 
-export default function Monthly() {
-  const diff = TOTAL_SPENT - LAST_MONTH_SAME_PERIOD;
+export default async function Monthly() {
+  const [totalSpent, lastMonthSamePeriod] = await Promise.all([
+    getCurrentMonthTotal(),
+    getLastMonthSamePeriodTotal(),
+  ]);
+  const diff = totalSpent - lastMonthSamePeriod;
   const diffLabel = diff >= 0 ? "더" : "적게";
 
   return (
@@ -36,7 +44,7 @@ export default function Monthly() {
       >
         <h1 className="text-lg font-bold">이번 달</h1>
         <p className="mt-4 text-4xl font-extrabold tracking-tight">
-          {formatWon(TOTAL_SPENT)}
+          {formatWon(totalSpent)}
         </p>
         <p className="mt-2 text-sm text-white/85">
           지난달 같은 기간보다 {formatWon(Math.abs(diff))} {diffLabel} 사용

@@ -1,12 +1,23 @@
+import Link from "next/link";
+import { getCurrentMonthTotal } from "@/app/lib/summary";
+
+export const dynamic = "force-dynamic";
+
 const INPUT_METHODS = [
   { label: "영수증", icon: "🧾" },
   { label: "말하기", icon: "🎤" },
-  { label: "글쓰기", icon: "✍️" },
+  { label: "글쓰기", icon: "✍️", href: "/write" },
   { label: "스크린샷", icon: "🖼️" },
   { label: "파일", icon: "📁" },
 ] as const;
 
-export default function Home() {
+function formatWon(amount: number) {
+  return `${amount.toLocaleString("ko-KR")}원`;
+}
+
+export default async function Home() {
+  const total = await getCurrentMonthTotal();
+
   return (
     <main
       className="relative flex flex-1 flex-col overflow-hidden px-5 pt-8 pb-10 text-white"
@@ -34,25 +45,41 @@ export default function Home() {
       </div>
 
       <div className="mt-8 grid grid-cols-3 gap-3">
-        {INPUT_METHODS.map((method) => (
-          <button
-            key={method.label}
-            type="button"
-            className="flex flex-col items-center gap-2 rounded-2xl bg-white/95 py-5 shadow-sm active:bg-white"
-          >
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-2xl">
-              {method.icon}
-            </span>
-            <span className="text-xs font-medium text-neutral-800">
-              {method.label}
-            </span>
-          </button>
-        ))}
+        {INPUT_METHODS.map((method) => {
+          const cardClassName =
+            "flex flex-col items-center gap-2 rounded-2xl bg-white/95 py-5 shadow-sm active:bg-white";
+          const content = (
+            <>
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-2xl">
+                {method.icon}
+              </span>
+              <span className="text-xs font-medium text-neutral-800">
+                {method.label}
+              </span>
+            </>
+          );
+
+          if ("href" in method) {
+            return (
+              <Link key={method.label} href={method.href} className={cardClassName}>
+                {content}
+              </Link>
+            );
+          }
+
+          return (
+            <button key={method.label} type="button" className={cardClassName}>
+              {content}
+            </button>
+          );
+        })}
       </div>
 
       <div className="mt-6 rounded-2xl bg-white/95 px-4 py-4 shadow-sm">
         <p className="text-xs text-neutral-500">이번 달 지출</p>
-        <p className="mt-1 text-xl font-bold text-neutral-900">0원</p>
+        <p className="mt-1 text-xl font-bold text-neutral-900">
+          {formatWon(total)}
+        </p>
       </div>
     </main>
   );

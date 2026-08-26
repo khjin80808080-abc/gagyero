@@ -1,34 +1,44 @@
-const HISTORY = [
-  {
-    date: "8월 22일",
-    items: [
-      { time: "09:12", merchant: "스타벅스 강남점", amount: 4500, icon: "🧾" },
-      { time: "13:40", merchant: "GS25", amount: 3200, icon: "🧾" },
-      { time: "19:05", merchant: "배달의민족", amount: 24000, icon: "🎤" },
-    ],
-  },
-  {
-    date: "8월 21일",
-    items: [
-      { time: "11:02", merchant: "쿠팡", amount: 158900, icon: "📁" },
-      { time: "20:31", merchant: "이마트", amount: 84300, icon: "🧾" },
-    ],
-  },
-  {
-    date: "8월 19일",
-    items: [
-      { time: "08:47", merchant: "스타벅스 강남점", amount: 5100, icon: "🧾" },
-      { time: "12:15", merchant: "김밥천국", amount: 8000, icon: "✍️" },
-      { time: "18:22", merchant: "다이소", amount: 12300, icon: "🖼️" },
-    ],
-  },
-] as const;
+import { prisma } from "@/app/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+const KIND_ICON: Record<string, string> = {
+  receipt: "🧾",
+  voice: "🎤",
+  manual: "✍️",
+  screenshot: "🖼️",
+  file: "📁",
+};
 
 function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
 }
 
-export default function History() {
+function formatDateHeading(date: Date) {
+  return date.toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
+}
+
+export default async function History() {
+  const transactions = await prisma.transaction.findMany({
+    orderBy: [{ occurredOn: "desc" }, { id: "desc" }],
+    include: { sources: true },
+  });
+
+  const groups: { dateKey: string; heading: string; items: typeof transactions }[] = [];
+  for (const transaction of transactions) {
+    const dateKey = transaction.occurredOn.toISOString().slice(0, 10);
+    const lastGroup = groups[groups.length - 1];
+    if (lastGroup && lastGroup.dateKey === dateKey) {
+      lastGroup.items.push(transaction);
+    } else {
+      groups.push({
+        dateKey,
+        heading: formatDateHeading(transaction.occurredOn),
+        items: [transaction],
+      });
+    }
+  }
+
   return (
     <main className="flex flex-1 flex-col bg-white text-neutral-900">
       <section
@@ -42,24 +52,34 @@ export default function History() {
       </section>
 
       <div className="flex flex-col gap-6 px-5 pt-6 pb-8">
-        {HISTORY.map((group) => (
-          <section key={group.date}>
+        {groups.length === 0 && (
+          <p className="pt-8 text-center text-sm text-neutral-400">
+            아직 등록된 기록이 없습니다.
+          </p>
+        )}
+
+        {groups.map((group) => (
+          <section key={group.dateKey}>
             <h2 className="text-sm font-semibold text-neutral-500">
-              {group.date}
+              {group.heading}
             </h2>
             <div className="mt-3 divide-y divide-neutral-100 rounded-2xl bg-neutral-50 shadow-sm">
               {group.items.map((item) => (
                 <div
-                  key={`${group.date}-${item.time}-${item.merchant}`}
+                  key={item.id}
                   className="flex items-center justify-between px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-base">
-                      {item.icon}
+                      {KIND_ICON[item.sources[0]?.kind ?? "manual"] ?? "✍️"}
                     </span>
                     <div>
-                      <p className="text-sm font-medium">{item.merchant}</p>
-                      <p className="text-xs text-neutral-400">{item.time}</p>
+                      <p className="text-sm font-medium">
+                        {item.merchantName}
+                      </p>
+                      <p className="text-xs text-neutral-400">
+                        {item.occurredTime ?? "시간 미상"}
+                      </p>
                     </div>
                   </div>
                   <span className="text-sm font-semibold">
