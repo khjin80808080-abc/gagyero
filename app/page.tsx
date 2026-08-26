@@ -1,14 +1,7 @@
-import Link from "next/link";
 import { getCurrentMonthTotal } from "@/app/lib/summary";
+import InputGrid from "@/app/components/InputGrid";
 
 export const dynamic = "force-dynamic";
-
-const INPUT_METHODS = [
-  { label: "촬영 등록", icon: "🧾" },
-  { label: "캡처 등록", icon: "🖼️" },
-  { label: "파일 등록", icon: "📁" },
-  { label: "글로 등록", icon: "✍️", href: "/write" },
-] as const;
 
 function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
@@ -47,36 +40,7 @@ export default async function Home() {
         ✨ 나도 쓸 수 있는 AI 가계부
       </span>
 
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        {INPUT_METHODS.map((method) => {
-          const cardClassName =
-            "flex flex-col items-center gap-2 rounded-2xl bg-white/95 py-6 shadow-sm active:bg-white";
-          const content = (
-            <>
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-2xl">
-                {method.icon}
-              </span>
-              <span className="text-sm font-medium text-neutral-800">
-                {method.label}
-              </span>
-            </>
-          );
-
-          if ("href" in method) {
-            return (
-              <Link key={method.label} href={method.href} className={cardClassName}>
-                {content}
-              </Link>
-            );
-          }
-
-          return (
-            <button key={method.label} type="button" className={cardClassName}>
-              {content}
-            </button>
-          );
-        })}
-      </div>
+      <InputGrid />
 
       <div className="mt-6 rounded-2xl bg-white/95 px-4 py-4 shadow-sm">
         <p className="text-xs text-neutral-500">이번 달 지출</p>
