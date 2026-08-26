@@ -4,11 +4,10 @@ import { getCurrentMonthTotal } from "@/app/lib/summary";
 export const dynamic = "force-dynamic";
 
 const INPUT_METHODS = [
-  { label: "영수증", icon: "🧾" },
-  { label: "말하기", icon: "🎤" },
-  { label: "글쓰기", icon: "✍️", href: "/write" },
-  { label: "스크린샷", icon: "🖼️" },
-  { label: "파일", icon: "📁" },
+  { label: "촬영 등록", icon: "🧾" },
+  { label: "캡처 등록", icon: "🖼️" },
+  { label: "파일 등록", icon: "📁" },
+  { label: "글로 등록", icon: "✍️", href: "/write" },
 ] as const;
 
 function formatWon(amount: number) {
@@ -38,22 +37,26 @@ export default async function Home() {
       <span className="relative text-lg font-bold tracking-tight">가계Ro</span>
 
       <div className="mt-7">
-        <h1 className="text-[26px] font-bold leading-snug">편한 등록 선택</h1>
+        <h1 className="text-[26px] font-bold leading-snug">자료 몰아넣기</h1>
         <p className="mt-2 text-sm text-white/80">
-          원하는 방법으로 등록하세요. 정리는 AI가 합니다.
+          영수증·캡처·파일을 넣으면 AI가 자동 분류·정리해요
         </p>
       </div>
 
-      <div className="mt-8 grid grid-cols-3 gap-3">
+      <span className="relative mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium">
+        ✨ 나도 쓸 수 있는 AI 가계부
+      </span>
+
+      <div className="mt-6 grid grid-cols-2 gap-3">
         {INPUT_METHODS.map((method) => {
           const cardClassName =
-            "flex flex-col items-center gap-2 rounded-2xl bg-white/95 py-5 shadow-sm active:bg-white";
+            "flex flex-col items-center gap-2 rounded-2xl bg-white/95 py-6 shadow-sm active:bg-white";
           const content = (
             <>
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-2xl">
                 {method.icon}
               </span>
-              <span className="text-xs font-medium text-neutral-800">
+              <span className="text-sm font-medium text-neutral-800">
                 {method.label}
               </span>
             </>
