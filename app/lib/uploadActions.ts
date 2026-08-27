@@ -21,17 +21,29 @@ export async function processUploadedFile(formData: FormData) {
   const filePath = await saveUploadedFile(file);
   const extracted = await extractReceiptData(file);
 
-  // 중복 판정: 사용처 + 날짜 + 시간 + 금액이 모두 동일하면 같은 거래로 본다.
+  // 중복 판정: 날짜 + 사용처 + 금액이 모두 동일하면 같은 거래로 본다.
   const duplicate = await prisma.transaction.findFirst({
     where: {
       merchantName: extracted.merchantName,
       occurredOn: extracted.occurredOn,
-      occurredTime: extracted.occurredTime,
       amount: extracted.amount,
     },
   });
 
   if (duplicate) {
+    // 새 transaction을 만들지 않고 기존 거래의 source로만 추가한다.
+    await prisma.source.create({
+      data: {
+        transactionId: duplicate.id,
+        kind,
+        filePath,
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/monthly");
+    revalidatePath("/history");
+
     return {
       status: "duplicate" as const,
       merchantName: extracted.merchantName,

@@ -77,9 +77,6 @@ export default async function History() {
                       <p className="text-sm font-medium">
                         {item.merchantName}
                       </p>
-                      <p className="text-xs text-neutral-400">
-                        {item.occurredTime ?? "시간 미상"}
-                      </p>
                     </div>
                   </div>
                   <span className="text-sm font-semibold">
