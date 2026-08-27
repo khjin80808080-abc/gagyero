@@ -48,18 +48,23 @@ export default function InputGrid() {
     total: number;
     done: number;
   } | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   async function handleFiles(kind: UploadKind, files: FileList | null) {
     if (!files || files.length === 0) return;
     const list = Array.from(files);
     setProgress({ total: list.length, done: 0 });
+    setMessage(null);
 
     for (const file of list) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("kind", kind);
       try {
-        await processUploadedFile(formData);
+        const result = await processUploadedFile(formData);
+        if (result.status === "duplicate") {
+          setMessage("이미 등록된 내역입니다.");
+        }
       } catch (error) {
         console.error("자료 처리 실패:", error);
       }
@@ -110,6 +115,10 @@ export default function InputGrid() {
         <p className="mt-3 text-center text-xs text-white/85">
           {progress.total}개 자료 중 {progress.done}개 처리 중
         </p>
+      )}
+
+      {!progress && message && (
+        <p className="mt-3 text-center text-xs text-white/85">{message}</p>
       )}
     </>
   );
