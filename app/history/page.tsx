@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/app/lib/prisma";
+import HistoryCalendar from "@/app/components/HistoryCalendar";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +53,17 @@ export default async function History() {
     }
   }
 
+  const calendarTransactions = transactions.map((transaction) => {
+    const date = transaction.occurredOn;
+    return {
+      id: transaction.id,
+      merchantName: transaction.merchantName,
+      amount: transaction.amount,
+      occurredTime: transaction.occurredTime,
+      dateKey: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
+    };
+  });
+
   return (
     <main className="flex flex-1 flex-col bg-white text-neutral-900">
       <section
@@ -63,6 +75,8 @@ export default async function History() {
       >
         <h1 className="text-lg font-bold">내역</h1>
       </section>
+
+      <HistoryCalendar transactions={calendarTransactions} />
 
       <div className="flex flex-col gap-6 px-5 pt-6 pb-8">
         {groups.length === 0 && (
