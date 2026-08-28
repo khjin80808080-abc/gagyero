@@ -35,21 +35,6 @@ export default function WritePage() {
 
         <div className="flex flex-col gap-1.5">
           <label
-            htmlFor="occurredTime"
-            className="text-xs font-medium text-neutral-500"
-          >
-            시간 (선택)
-          </label>
-          <input
-            id="occurredTime"
-            name="occurredTime"
-            type="time"
-            className="rounded-xl border border-neutral-200 px-3 py-2.5 text-sm"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label
             htmlFor="merchantName"
             className="text-xs font-medium text-neutral-500"
           >

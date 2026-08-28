@@ -6,7 +6,6 @@ import { prisma } from "@/app/lib/prisma";
 
 export async function createManualTransaction(formData: FormData) {
   const occurredOnRaw = formData.get("occurredOn");
-  const occurredTimeRaw = formData.get("occurredTime");
   const merchantNameRaw = formData.get("merchantName");
   const amountRaw = formData.get("amount");
   const memoRaw = formData.get("memo");
@@ -15,10 +14,6 @@ export async function createManualTransaction(formData: FormData) {
     typeof occurredOnRaw === "string" && occurredOnRaw
       ? occurredOnRaw
       : new Date().toISOString().slice(0, 10);
-  const occurredTime =
-    typeof occurredTimeRaw === "string" && occurredTimeRaw
-      ? occurredTimeRaw
-      : null;
   const merchantName =
     typeof merchantNameRaw === "string" ? merchantNameRaw.trim() : "";
   const amount =
@@ -34,7 +29,6 @@ export async function createManualTransaction(formData: FormData) {
     data: {
       userId: "local",
       occurredOn: new Date(`${occurredOnStr}T00:00:00`),
-      occurredTime,
       merchantName,
       amount,
       memo,
