@@ -19,9 +19,9 @@ function formatWon(amount: number) {
 // UTC 변환으로 날짜가 하루 밀리는 것을 피하기 위해 로컬 getter로 포맷한다.
 function formatDateHeading(date: Date) {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}.${month}.${day}`;
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}년 ${month}월 ${day}일`;
 }
 
 export default async function History() {
@@ -74,13 +74,15 @@ export default async function History() {
         {groups.map((group, index) => {
           const isNewYear = index === 0 || groups[index - 1].year !== group.year;
           return (
-            <section key={group.dateKey}>
-              {isNewYear && (
-                <h2 className="text-xs font-bold tracking-wide text-violet-600">
-                  {group.year}년
-                </h2>
-              )}
-              <h3 className="mt-1 text-sm font-semibold text-neutral-500">
+            <section
+              key={group.dateKey}
+              className={
+                isNewYear && index > 0
+                  ? "border-t border-neutral-100 pt-6"
+                  : undefined
+              }
+            >
+              <h3 className="text-sm font-semibold text-neutral-500">
                 {group.heading}
               </h3>
               <div className="mt-3 divide-y divide-neutral-100 rounded-2xl bg-neutral-50 shadow-sm">

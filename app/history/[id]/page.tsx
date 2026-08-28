@@ -13,9 +13,9 @@ function formatWon(amount: number) {
 // occurredOn은 로컬 날짜로 생성되므로 로컬 getter로 포맷해 하루 밀림을 피한다.
 function formatDate(date: Date) {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}.${month}.${day}`;
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}년 ${month}월 ${day}일`;
 }
 
 function isImagePath(filePath: string) {
@@ -68,6 +68,7 @@ export default async function TransactionDetail({
         <h1 className="mt-4 text-xl font-bold">{transaction.merchantName}</h1>
         <p className="mt-1 text-sm text-white/85">
           {formatDate(transaction.occurredOn)}
+          {transaction.occurredTime ? ` ${transaction.occurredTime}` : ""}
         </p>
         <p className="mt-4 text-3xl font-extrabold tracking-tight">
           {formatWon(transaction.amount)}
