@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/app/lib/prisma";
+import ReceiptImageViewer from "@/app/components/ReceiptImageViewer";
 
 export const dynamic = "force-dynamic";
 
@@ -63,7 +64,7 @@ export default async function TransactionDetail({
         }}
       >
         <Link href="/history" className="text-sm text-white/70">
-          ← 내역
+          &lt; 뒤로
         </Link>
         <h1 className="mt-4 text-xl font-bold">{transaction.merchantName}</h1>
         <p className="mt-1 text-sm text-white/85">
@@ -85,17 +86,13 @@ export default async function TransactionDetail({
               원본 이미지가 없습니다.
             </p>
           ) : (
-            <div className="mt-3 flex gap-3 overflow-x-auto pb-1">
-              {images.map((source) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={source.id}
-                  src={receiptSrc(source.filePath as string)}
-                  alt={`${transaction.merchantName} 원본 자료`}
-                  className="h-56 w-auto flex-none rounded-2xl border border-neutral-100 object-cover"
-                />
-              ))}
-            </div>
+            <ReceiptImageViewer
+              images={images.map((source) => ({
+                id: source.id,
+                src: receiptSrc(source.filePath as string),
+              }))}
+              alt={`${transaction.merchantName} 원본 자료`}
+            />
           )}
         </section>
 
