@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Transaction {
+  id           Int      @id @default(autoincrement())
+  userId       String
+  occurredOn   DateTime
+  occurredTime String?
+  merchantName String
+  amount       Int
+  memo         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sources   Source[]
+  lineItems LineItem[]
+
+  // 중복 판정 기준: 사용처 + 날짜 + 시간 + 금액
+  @@index([merchantName, occurredOn, occurredTime, amount])
+  @@map("transactions")
+}
+
+// kind: "receipt" | "voice" | "manual" | "screenshot" | "file"
+// (SQLite는 네이티브 enum을 지원하지 않아 String으로 관리)
+model Source {
+  id            Int      @id @default(autoincrement())
+  transactionId Int
+  kind          String
+  rawText       String?
+  filePath      String?
+  createdAt     DateTime @default(now())
+
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+
+  @@map("sources")
+}
+
+model LineItem {
+  id            Int    @id @default(autoincrement())
+  transactionId Int
+  name          String
+  amount        Int
+
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+
+  @@map("line_items")
+}
