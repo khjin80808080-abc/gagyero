@@ -56,19 +56,23 @@ export default function InputGrid() {
     setProgress({ total: list.length, done: 0 });
     setMessage(null);
 
+    let duplicateTotal = 0;
+
     for (const file of list) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("kind", kind);
       try {
         const result = await processUploadedFile(formData);
-        if (result.status === "duplicate") {
-          setMessage("이미 등록된 내역입니다.");
-        }
+        duplicateTotal += result.duplicate;
       } catch (error) {
         console.error("자료 처리 실패:", error);
       }
       setProgress((prev) => (prev ? { ...prev, done: prev.done + 1 } : prev));
+    }
+
+    if (duplicateTotal > 0) {
+      setMessage(`이미 등록된 내역 ${duplicateTotal}건은 건너뛰었습니다.`);
     }
 
     router.refresh();

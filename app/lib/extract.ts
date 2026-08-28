@@ -5,9 +5,8 @@ import {
   createPartFromBase64,
 } from "@google/genai";
 
-export interface ExtractedReceipt {
+export interface ExtractedTransaction {
   occurredOn: Date;
-  occurredTime: string | null;
   merchantName: string;
   amount: number;
 }
@@ -17,32 +16,40 @@ const MODEL = "gemini-3.6-flash";
 const RESPONSE_SCHEMA = {
   type: Type.OBJECT,
   properties: {
-    date: {
-      type: Type.STRING,
-      description: "결제 날짜, YYYY-MM-DD 형식",
-    },
-    time: {
-      type: Type.STRING,
-      nullable: true,
-      description: "결제 시각, HH:mm 24시간 형식. 이미지에 없으면 null",
-    },
-    merchantName: {
-      type: Type.STRING,
-      description: "가맹점/사용처 이름",
-    },
-    amount: {
-      type: Type.INTEGER,
-      description: "총 결제 금액, 원 단위 정수 (통화 기호·소수점 제외)",
+    transactions: {
+      type: Type.ARRAY,
+      description: "이미지 안에서 확인되는 개별 거래 목록",
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          date: {
+            type: Type.STRING,
+            description: "결제 날짜, YYYY-MM-DD 형식",
+          },
+          merchantName: {
+            type: Type.STRING,
+            description: "가맹점/사용처 이름",
+          },
+          amount: {
+            type: Type.INTEGER,
+            description: "결제 금액, 원 단위 정수 (통화 기호·소수점 제외)",
+          },
+        },
+        required: ["date", "merchantName", "amount"],
+      },
     },
   },
-  required: ["date", "merchantName", "amount"],
+  required: ["transactions"],
 };
 
-interface GeminiExtraction {
+interface GeminiTransaction {
   date: string;
-  time?: string | null;
   merchantName: string;
   amount: number;
+}
+
+interface GeminiExtraction {
+  transactions: GeminiTransaction[];
 }
 
 function getClient(): GoogleGenAI {
@@ -54,12 +61,14 @@ function getClient(): GoogleGenAI {
 }
 
 /**
- * Gemini Vision을 사용해 영수증/캡처 이미지에서 날짜·시간·사용처·금액
- * 4가지만 추출한다. 다른 분석이나 카테고리는 추가하지 않는다.
+ * Gemini Vision을 사용해 영수증/카드 이용내역 캡처 이미지에서 거래를 모두
+ * 찾아 날짜·사용처·금액 3가지만 추출한다. 카드 이용내역처럼 한 이미지에
+ * 여러 거래가 나열된 경우 각각을 별도 항목으로 반환한다. 다른 분석이나
+ * 카테고리는 추가하지 않는다.
  */
-export async function extractReceiptData(
+export async function extractTransactions(
   file: File,
-): Promise<ExtractedReceipt> {
+): Promise<ExtractedTransaction[]> {
   const ai = getClient();
   const buffer = Buffer.from(await file.arrayBuffer());
   const base64Data = buffer.toString("base64");
@@ -69,7 +78,7 @@ export async function extractReceiptData(
     model: MODEL,
     contents: createUserContent([
       createPartFromBase64(base64Data, mimeType),
-      "이 영수증 또는 캡처 이미지에서 날짜, 시간, 사용처, 금액 4가지만 정확히 추출해줘. 이미지에서 직접 확인되지 않는 정보는 추측하지 말고, 시간이 안 보이면 time을 null로 남겨줘.",
+      "이 영수증 또는 카드 이용내역/결제내역 캡처 이미지에서 개별 거래를 모두 찾아줘. 종이 영수증처럼 거래가 1건뿐이면 1건만, 카드 이용내역처럼 여러 거래가 나열되어 있으면 각각을 별도 항목으로 담아줘. 각 거래마다 날짜, 사용처, 금액 3가지만 정확히 추출하고, 이미지에서 직접 확인되지 않는 정보는 추측하지 마.",
     ]),
     config: {
       responseMimeType: "application/json",
@@ -84,10 +93,9 @@ export async function extractReceiptData(
 
   const parsed = JSON.parse(text) as GeminiExtraction;
 
-  return {
-    occurredOn: new Date(`${parsed.date}T00:00:00`),
-    occurredTime: parsed.time ?? null,
-    merchantName: parsed.merchantName,
-    amount: Math.round(parsed.amount),
-  };
+  return parsed.transactions.map((transaction) => ({
+    occurredOn: new Date(`${transaction.date}T00:00:00`),
+    merchantName: transaction.merchantName,
+    amount: Math.round(transaction.amount),
+  }));
 }
