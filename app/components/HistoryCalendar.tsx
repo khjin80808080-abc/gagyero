@@ -27,6 +27,7 @@ export default function HistoryCalendar({
   transactions: CalendarTransaction[];
 }) {
   const today = new Date();
+  const todayKey = dateKeyFor(today.getFullYear(), today.getMonth(), today.getDate());
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
@@ -57,68 +58,73 @@ export default function HistoryCalendar({
 
   return (
     <section className="px-5 pt-6">
-      <div className="flex items-center justify-center gap-4">
-        <button
-          type="button"
-          onClick={() => goToMonth(-1)}
-          aria-label="이전 달"
-          className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 active:bg-neutral-100"
-        >
-          &lt;
-        </button>
-        <p className="text-sm font-semibold text-neutral-900">
-          {year}년 {month + 1}월
-        </p>
-        <button
-          type="button"
-          onClick={() => goToMonth(1)}
-          aria-label="다음 달"
-          className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 active:bg-neutral-100"
-        >
-          &gt;
-        </button>
-      </div>
+      <div className="rounded-3xl bg-neutral-50 p-4 shadow-sm">
+        <div className="flex items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={() => goToMonth(-1)}
+            aria-label="이전 달"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-violet-500 active:bg-violet-100"
+          >
+            &lt;
+          </button>
+          <p className="text-sm font-semibold text-neutral-900">
+            {year}년 {month + 1}월
+          </p>
+          <button
+            type="button"
+            onClick={() => goToMonth(1)}
+            aria-label="다음 달"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-violet-500 active:bg-violet-100"
+          >
+            &gt;
+          </button>
+        </div>
 
-      <div className="mt-4 grid grid-cols-7 text-center text-xs text-neutral-400">
-        {WEEKDAY_LABELS.map((label) => (
-          <span key={label} className="py-1">
-            {label}
-          </span>
-        ))}
-      </div>
+        <div className="mt-4 grid grid-cols-7 text-center text-xs text-neutral-400">
+          {WEEKDAY_LABELS.map((label) => (
+            <span key={label} className="py-1">
+              {label}
+            </span>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-7 gap-y-1 text-center">
-        {cells.map((day, index) => {
-          if (day === null) {
-            return <span key={`empty-${index}`} />;
-          }
-          const key = dateKeyFor(year, month, day);
-          const hasTransaction = markedDates.has(key);
-          const isSelected = selectedDateKey === key;
-          return (
-            <button
-              type="button"
-              key={key}
-              onClick={() => setSelectedDateKey(isSelected ? null : key)}
-              className={`mx-auto flex h-10 w-10 flex-col items-center justify-center gap-0.5 rounded-full text-sm ${
-                isSelected
-                  ? "bg-violet-600 text-white"
-                  : "text-neutral-800 active:bg-neutral-100"
-              }`}
-            >
-              <span>{day}</span>
-              <span
-                className={`h-1 w-1 rounded-full ${
-                  hasTransaction
-                    ? isSelected
-                      ? "bg-white"
-                      : "bg-violet-600"
-                    : "bg-transparent"
+        <div className="grid grid-cols-7 gap-y-2 text-center">
+          {cells.map((day, index) => {
+            if (day === null) {
+              return <span key={`empty-${index}`} />;
+            }
+            const key = dateKeyFor(year, month, day);
+            const hasTransaction = markedDates.has(key);
+            const isSelected = selectedDateKey === key;
+            const isToday = key === todayKey;
+            return (
+              <button
+                type="button"
+                key={key}
+                onClick={() => setSelectedDateKey(isSelected ? null : key)}
+                className={`mx-auto flex h-11 w-11 flex-col items-center justify-center gap-1 rounded-full text-sm transition-colors ${
+                  isSelected
+                    ? "bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-sm"
+                    : isToday
+                      ? "font-semibold text-violet-700 ring-1 ring-inset ring-violet-300 active:bg-violet-100"
+                      : "text-neutral-800 active:bg-neutral-100"
                 }`}
-              />
-            </button>
-          );
-        })}
+              >
+                <span>{day}</span>
+                <span
+                  className={`h-1 w-1 rounded-full ${
+                    hasTransaction
+                      ? isSelected
+                        ? "bg-white"
+                        : "bg-fuchsia-500"
+                      : "bg-transparent"
+                  }`}
+                />
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {selectedDateKey && (
