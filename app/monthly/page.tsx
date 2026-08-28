@@ -25,6 +25,7 @@ export default async function Monthly() {
     ]);
   const diff = totalSpent - lastMonthSamePeriod;
   const diffLabel = diff >= 0 ? "더" : "적게";
+  const now = new Date();
 
   return (
     <main className="flex flex-1 flex-col bg-white text-neutral-900">
@@ -35,7 +36,9 @@ export default async function Monthly() {
             "linear-gradient(160deg, #33127a 0%, #7c3aed 32%, #c026d3 62%, #fb923c 100%)",
         }}
       >
-        <h1 className="text-lg font-bold">이번 달</h1>
+        <h1 className="text-lg font-bold">
+          이번 달 · {now.getFullYear()}년 {now.getMonth() + 1}월
+        </h1>
         <p className="mt-4 text-4xl font-extrabold tracking-tight">
           {formatWon(totalSpent)}
         </p>

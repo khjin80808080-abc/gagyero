@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/app/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -14,8 +15,13 @@ function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
 }
 
+// occurredOn은 로컬 날짜(YYYY-MM-DDT00:00:00)로 생성되므로, toISOString()의
+// UTC 변환으로 날짜가 하루 밀리는 것을 피하기 위해 로컬 getter로 포맷한다.
 function formatDateHeading(date: Date) {
-  return date.toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}.${month}.${day}`;
 }
 
 export default async function History() {
@@ -24,16 +30,23 @@ export default async function History() {
     include: { sources: true },
   });
 
-  const groups: { dateKey: string; heading: string; items: typeof transactions }[] = [];
+  const groups: {
+    dateKey: string;
+    heading: string;
+    year: number;
+    items: typeof transactions;
+  }[] = [];
   for (const transaction of transactions) {
-    const dateKey = transaction.occurredOn.toISOString().slice(0, 10);
+    const date = transaction.occurredOn;
+    const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
     const lastGroup = groups[groups.length - 1];
     if (lastGroup && lastGroup.dateKey === dateKey) {
       lastGroup.items.push(transaction);
     } else {
       groups.push({
         dateKey,
-        heading: formatDateHeading(transaction.occurredOn),
+        heading: formatDateHeading(date),
+        year: date.getFullYear(),
         items: [transaction],
       });
     }
@@ -58,35 +71,44 @@ export default async function History() {
           </p>
         )}
 
-        {groups.map((group) => (
-          <section key={group.dateKey}>
-            <h2 className="text-sm font-semibold text-neutral-500">
-              {group.heading}
-            </h2>
-            <div className="mt-3 divide-y divide-neutral-100 rounded-2xl bg-neutral-50 shadow-sm">
-              {group.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between px-4 py-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-base">
-                      {KIND_ICON[item.sources[0]?.kind ?? "manual"] ?? "✍️"}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium">
-                        {item.merchantName}
-                      </p>
+        {groups.map((group, index) => {
+          const isNewYear = index === 0 || groups[index - 1].year !== group.year;
+          return (
+            <section key={group.dateKey}>
+              {isNewYear && (
+                <h2 className="text-xs font-bold tracking-wide text-violet-600">
+                  {group.year}년
+                </h2>
+              )}
+              <h3 className="mt-1 text-sm font-semibold text-neutral-500">
+                {group.heading}
+              </h3>
+              <div className="mt-3 divide-y divide-neutral-100 rounded-2xl bg-neutral-50 shadow-sm">
+                {group.items.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/history/${item.id}`}
+                    className="flex items-center justify-between px-4 py-3 active:bg-neutral-100"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-base">
+                        {KIND_ICON[item.sources[0]?.kind ?? "manual"] ?? "✍️"}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium">
+                          {item.merchantName}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <span className="text-sm font-semibold">
-                    {formatWon(item.amount)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
+                    <span className="text-sm font-semibold">
+                      {formatWon(item.amount)}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </main>
   );
