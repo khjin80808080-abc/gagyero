@@ -18,23 +18,22 @@ export async function getCurrentMonthTotal() {
   return result._sum.amount ?? 0;
 }
 
-export async function getLastMonthSamePeriodTotal() {
+// 지난달 전체(1일~말일)의 합계. 지난달에 거래가 하나도 없으면 null을
+// 반환해, 화면에서 "0원과 비교"가 아니라 "거래 없음"으로 구분해 보여줄 수
+// 있게 한다.
+export async function getLastMonthTotal() {
   const now = new Date();
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const lastMonthSamePeriodEnd = new Date(
-    now.getFullYear(),
-    now.getMonth() - 1,
-    now.getDate() + 1,
-  );
+  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
 
   const result = await prisma.transaction.aggregate({
     _sum: { amount: true },
     where: {
-      occurredOn: { gte: lastMonthStart, lt: lastMonthSamePeriodEnd },
+      occurredOn: { gte: lastMonthStart, lt: lastMonthEnd },
     },
   });
 
-  return result._sum.amount ?? 0;
+  return result._sum.amount;
 }
 
 export async function getTopMerchantsThisMonth(limit: number) {

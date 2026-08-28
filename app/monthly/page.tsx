@@ -1,6 +1,6 @@
 import {
   getCurrentMonthTotal,
-  getLastMonthSamePeriodTotal,
+  getLastMonthTotal,
   getTopMerchantsThisMonth,
   getTopExpensesThisMonth,
 } from "@/app/lib/summary";
@@ -16,15 +16,13 @@ function formatDate(date: Date) {
 }
 
 export default async function Monthly() {
-  const [totalSpent, lastMonthSamePeriod, topMerchants, topExpenses] =
+  const [totalSpent, lastMonthTotal, topMerchants, topExpenses] =
     await Promise.all([
       getCurrentMonthTotal(),
-      getLastMonthSamePeriodTotal(),
-      getTopMerchantsThisMonth(5),
-      getTopExpensesThisMonth(5),
+      getLastMonthTotal(),
+      getTopMerchantsThisMonth(3),
+      getTopExpensesThisMonth(3),
     ]);
-  const diff = totalSpent - lastMonthSamePeriod;
-  const diffLabel = diff >= 0 ? "더" : "적게";
   const now = new Date();
 
   return (
@@ -43,7 +41,16 @@ export default async function Monthly() {
           {formatWon(totalSpent)}
         </p>
         <p className="mt-2 text-sm text-white/85">
-          지난달 같은 기간보다 {formatWon(Math.abs(diff))} {diffLabel} 사용
+          {lastMonthTotal === null ? (
+            "지난달 지출 내역이 없습니다"
+          ) : totalSpent === lastMonthTotal ? (
+            "지난달과 지출이 같습니다"
+          ) : (
+            <>
+              지난달보다 {formatWon(Math.abs(totalSpent - lastMonthTotal))}{" "}
+              {totalSpent > lastMonthTotal ? "더" : "덜"} 사용
+            </>
+          )}
         </p>
       </section>
 
