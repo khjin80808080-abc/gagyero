@@ -25,47 +25,51 @@ export async function processUploadedFile(formData: FormData) {
   let duplicate = 0;
 
   // 이미지 1장 안에 여러 거래가 있을 수 있으므로 각 거래를 독립적으로 중복 판정한다.
-  // 한 건이 중복이어도 나머지 거래 처리는 계속한다.
+  // 한 건이 중복이거나 저장 중 오류가 나도 나머지 거래 처리는 계속한다.
   for (const extracted of transactions) {
-    // 중복 판정: 날짜 + 사용처 + 금액이 모두 동일하면 같은 거래로 본다.
-    const existing = await prisma.transaction.findFirst({
-      where: {
-        merchantName: extracted.merchantName,
-        occurredOn: extracted.occurredOn,
-        amount: extracted.amount,
-      },
-    });
+    try {
+      // 중복 판정: 날짜 + 사용처 + 금액이 모두 동일하면 같은 거래로 본다.
+      const existing = await prisma.transaction.findFirst({
+        where: {
+          merchantName: extracted.merchantName,
+          occurredOn: extracted.occurredOn,
+          amount: extracted.amount,
+        },
+      });
 
-    if (existing) {
-      // 새 transaction을 만들지 않고 기존 거래의 source로만 추가한다.
+      if (existing) {
+        // 새 transaction을 만들지 않고 기존 거래의 source로만 추가한다.
+        await prisma.source.create({
+          data: {
+            transactionId: existing.id,
+            kind,
+            filePath,
+          },
+        });
+        duplicate += 1;
+        continue;
+      }
+
+      const transaction = await prisma.transaction.create({
+        data: {
+          userId: "local",
+          occurredOn: extracted.occurredOn,
+          merchantName: extracted.merchantName,
+          amount: extracted.amount,
+        },
+      });
+
       await prisma.source.create({
         data: {
-          transactionId: existing.id,
+          transactionId: transaction.id,
           kind,
           filePath,
         },
       });
-      duplicate += 1;
-      continue;
+      created += 1;
+    } catch (error) {
+      console.error("거래 저장 중 오류가 발생해 해당 항목을 건너뜁니다:", extracted, error);
     }
-
-    const transaction = await prisma.transaction.create({
-      data: {
-        userId: "local",
-        occurredOn: extracted.occurredOn,
-        merchantName: extracted.merchantName,
-        amount: extracted.amount,
-      },
-    });
-
-    await prisma.source.create({
-      data: {
-        transactionId: transaction.id,
-        kind,
-        filePath,
-      },
-    });
-    created += 1;
   }
 
   revalidatePath("/");

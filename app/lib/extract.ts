@@ -52,6 +52,34 @@ interface GeminiExtraction {
   transactions: GeminiTransaction[];
 }
 
+// Gemini가 스키마 지시(YYYY-MM-DD)를 벗어나 화면에 보이는 날짜 표기를
+// 그대로 베끼는 경우(예: "25.08.08")까지 흔한 형식만 최소한으로 허용한다.
+function parseOccurredOn(dateStr: string): Date | null {
+  const trimmed = dateStr.trim();
+
+  const isoMatch = trimmed.match(/^(\d{4})[-.](\d{1,2})[-.](\d{1,2})$/);
+  if (isoMatch) {
+    const [, year, month, day] = isoMatch;
+    const date = new Date(
+      `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T00:00:00`,
+    );
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  const shortYearMatch = trimmed.match(/^(\d{2})[.-](\d{1,2})[.-](\d{1,2})$/);
+  if (shortYearMatch) {
+    const [, shortYear, month, day] = shortYearMatch;
+    const year = 2000 + Number(shortYear);
+    const date = new Date(
+      `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T00:00:00`,
+    );
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  const fallback = new Date(`${trimmed}T00:00:00`);
+  return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
 function getClient(): GoogleGenAI {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -78,7 +106,7 @@ export async function extractTransactions(
     model: MODEL,
     contents: createUserContent([
       createPartFromBase64(base64Data, mimeType),
-      "이 영수증 또는 카드 이용내역/결제내역 캡처 이미지에서 개별 거래를 모두 찾아줘. 종이 영수증처럼 거래가 1건뿐이면 1건만, 카드 이용내역처럼 여러 거래가 나열되어 있으면 각각을 별도 항목으로 담아줘. 각 거래마다 날짜, 사용처, 금액 3가지만 정확히 추출하고, 이미지에서 직접 확인되지 않는 정보는 추측하지 마.",
+      "이 영수증 또는 카드 이용내역/결제내역 캡처 이미지에서 개별 거래를 모두 찾아줘. 종이 영수증처럼 거래가 1건뿐이면 1건만, 카드 이용내역처럼 여러 거래가 나열되어 있으면 화면에 보이는 항목을 하나도 빠뜨리지 말고 각각을 별도 항목으로 담아줘. 각 거래마다 날짜, 사용처, 금액 3가지만 정확히 추출하고, 이미지에서 직접 확인되지 않는 정보는 추측하지 마. 날짜는 화면 표기와 무관하게 항상 YYYY-MM-DD 형식으로 변환해서 반환해줘.",
     ]),
     config: {
       responseMimeType: "application/json",
@@ -93,9 +121,24 @@ export async function extractTransactions(
 
   const parsed = JSON.parse(text) as GeminiExtraction;
 
-  return parsed.transactions.map((transaction) => ({
-    occurredOn: new Date(`${transaction.date}T00:00:00`),
-    merchantName: transaction.merchantName,
-    amount: Math.round(transaction.amount),
-  }));
+  // 한 항목의 값이 이상해도 나머지 항목은 그대로 저장돼야 하므로,
+  // 형식이 올바르지 않은 항목만 건너뛰고 전체를 중단하지 않는다.
+  const transactions: ExtractedTransaction[] = [];
+  for (const transaction of parsed.transactions) {
+    const occurredOn = parseOccurredOn(transaction.date);
+    const merchantName = transaction.merchantName?.trim();
+    const amount = Math.round(transaction.amount);
+
+    if (!occurredOn || !merchantName || !Number.isFinite(amount)) {
+      console.error(
+        "Gemini 응답에서 형식이 올바르지 않은 거래 항목을 건너뜁니다:",
+        transaction,
+      );
+      continue;
+    }
+
+    transactions.push({ occurredOn, merchantName, amount });
+  }
+
+  return transactions;
 }
