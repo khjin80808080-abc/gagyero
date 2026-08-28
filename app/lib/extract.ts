@@ -5,10 +5,16 @@ import {
   createPartFromBase64,
 } from "@google/genai";
 
+export interface ExtractedLineItem {
+  name: string;
+  amount: number;
+}
+
 export interface ExtractedTransaction {
   occurredOn: Date;
   merchantName: string;
   amount: number;
+  lineItems: ExtractedLineItem[];
 }
 
 const MODEL = "gemini-3.6-flash";
@@ -32,7 +38,26 @@ const RESPONSE_SCHEMA = {
           },
           amount: {
             type: Type.INTEGER,
-            description: "결제 금액, 원 단위 정수 (통화 기호·소수점 제외)",
+            description: "결제 금액(총액), 원 단위 정수 (통화 기호·소수점 제외)",
+          },
+          lineItems: {
+            type: Type.ARRAY,
+            description:
+              "영수증에 구매 품목이 나열된 경우 각 품목. 품목이 없거나 구분되지 않으면 빈 배열.",
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                name: {
+                  type: Type.STRING,
+                  description: "구매 품목명",
+                },
+                amount: {
+                  type: Type.INTEGER,
+                  description: "해당 품목의 금액, 원 단위 정수",
+                },
+              },
+              required: ["name", "amount"],
+            },
           },
         },
         required: ["date", "merchantName", "amount"],
@@ -42,10 +67,16 @@ const RESPONSE_SCHEMA = {
   required: ["transactions"],
 };
 
+interface GeminiLineItem {
+  name: string;
+  amount: number;
+}
+
 interface GeminiTransaction {
   date: string;
   merchantName: string;
   amount: number;
+  lineItems?: GeminiLineItem[];
 }
 
 interface GeminiExtraction {
@@ -90,8 +121,10 @@ function getClient(): GoogleGenAI {
 
 /**
  * Gemini Vision을 사용해 영수증/카드 이용내역 캡처 이미지에서 거래를 모두
- * 찾아 날짜·사용처·금액 3가지만 추출한다. 카드 이용내역처럼 한 이미지에
- * 여러 거래가 나열된 경우 각각을 별도 항목으로 반환한다. 다른 분석이나
+ * 찾아 날짜·사용처·금액 3가지를 추출한다. 카드 이용내역처럼 한 이미지에
+ * 여러 거래가 나열된 경우 각각을 별도 항목으로 반환한다. 종이 영수증처럼
+ * 구매 품목이 나열된 경우 각 품목명·금액을 거래에 딸린 lineItems로 함께
+ * 추출하되, 품목은 거래의 세부내역일 뿐 별도 거래가 아니다. 그 외 분석이나
  * 카테고리는 추가하지 않는다.
  */
 export async function extractTransactions(
@@ -106,7 +139,7 @@ export async function extractTransactions(
     model: MODEL,
     contents: createUserContent([
       createPartFromBase64(base64Data, mimeType),
-      "이 영수증 또는 카드 이용내역/결제내역 캡처 이미지에서 개별 거래를 모두 찾아줘. 종이 영수증처럼 거래가 1건뿐이면 1건만, 카드 이용내역처럼 여러 거래가 나열되어 있으면 화면에 보이는 항목을 하나도 빠뜨리지 말고 각각을 별도 항목으로 담아줘. 각 거래마다 날짜, 사용처, 금액 3가지만 정확히 추출하고, 이미지에서 직접 확인되지 않는 정보는 추측하지 마. 날짜는 화면 표기와 무관하게 항상 YYYY-MM-DD 형식으로 변환해서 반환해줘.",
+      "이 영수증 또는 카드 이용내역/결제내역 캡처 이미지에서 개별 거래를 모두 찾아줘. 종이 영수증처럼 거래가 1건뿐이면 1건만, 카드 이용내역처럼 여러 거래가 나열되어 있으면 화면에 보이는 항목을 하나도 빠뜨리지 말고 각각을 별도 항목으로 담아줘. 각 거래마다 날짜, 사용처, 결제 총액 3가지를 정확히 추출하고, 이미지에서 직접 확인되지 않는 정보는 추측하지 마. 날짜는 화면 표기와 무관하게 항상 YYYY-MM-DD 형식으로 변환해서 반환해줘. 영수증처럼 구매 품목(상품명과 개별 금액)이 나열되어 있으면 그 거래의 lineItems 배열에 품목을 모두 담아줘. 품목은 거래의 총액을 구성하는 세부 내역일 뿐이니 amount(총액)와 별개의 거래로 만들지 말고, 품목 금액 합계를 다시 별도로 취급하지 마. 품목이 없거나 구분되지 않으면 lineItems는 빈 배열로 둬.",
     ]),
     config: {
       responseMimeType: "application/json",
@@ -137,7 +170,22 @@ export async function extractTransactions(
       continue;
     }
 
-    transactions.push({ occurredOn, merchantName, amount });
+    // 품목 하나의 형식이 이상해도 거래 저장 자체는 막지 않고 그 품목만 제외한다.
+    const lineItems: ExtractedLineItem[] = [];
+    for (const lineItem of transaction.lineItems ?? []) {
+      const name = lineItem.name?.trim();
+      const lineAmount = Math.round(lineItem.amount);
+      if (!name || !Number.isFinite(lineAmount)) {
+        console.error(
+          "Gemini 응답에서 형식이 올바르지 않은 품목을 건너뜁니다:",
+          lineItem,
+        );
+        continue;
+      }
+      lineItems.push({ name, amount: lineAmount });
+    }
+
+    transactions.push({ occurredOn, merchantName, amount, lineItems });
   }
 
   return transactions;

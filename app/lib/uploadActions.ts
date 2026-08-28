@@ -66,6 +66,20 @@ export async function processUploadedFile(formData: FormData) {
           filePath,
         },
       });
+
+      // 품목은 이 거래의 세부내역일 뿐이므로 거래 총액(amount)과는 별개로,
+      // 새로 만든 transaction에만 연결해 저장한다. 별도 거래로 만들거나
+      // 월 지출 합계에 다시 더해지지 않는다 (summary.ts는 Transaction.amount만 집계).
+      if (extracted.lineItems.length > 0) {
+        await prisma.lineItem.createMany({
+          data: extracted.lineItems.map((lineItem) => ({
+            transactionId: transaction.id,
+            name: lineItem.name,
+            amount: lineItem.amount,
+          })),
+        });
+      }
+
       created += 1;
     } catch (error) {
       console.error("거래 저장 중 오류가 발생해 해당 항목을 건너뜁니다:", extracted, error);
