@@ -1,57 +1,14 @@
-import Link from "next/link";
 import { prisma } from "@/app/lib/prisma";
 import HistoryCalendar from "@/app/components/HistoryCalendar";
+import HistoryList from "@/app/components/HistoryList";
 
 export const dynamic = "force-dynamic";
-
-const KIND_ICON: Record<string, string> = {
-  receipt: "🧾",
-  voice: "🎤",
-  manual: "✍️",
-  screenshot: "🖼️",
-  file: "📁",
-};
-
-function formatWon(amount: number) {
-  return `${amount.toLocaleString("ko-KR")}원`;
-}
-
-// occurredOn은 로컬 날짜(YYYY-MM-DDT00:00:00)로 생성되므로, toISOString()의
-// UTC 변환으로 날짜가 하루 밀리는 것을 피하기 위해 로컬 getter로 포맷한다.
-function formatDateHeading(date: Date) {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}년 ${month}월 ${day}일`;
-}
 
 export default async function History() {
   const transactions = await prisma.transaction.findMany({
     orderBy: [{ occurredOn: "desc" }, { id: "desc" }],
     include: { sources: true },
   });
-
-  const groups: {
-    dateKey: string;
-    heading: string;
-    year: number;
-    items: typeof transactions;
-  }[] = [];
-  for (const transaction of transactions) {
-    const date = transaction.occurredOn;
-    const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    const lastGroup = groups[groups.length - 1];
-    if (lastGroup && lastGroup.dateKey === dateKey) {
-      lastGroup.items.push(transaction);
-    } else {
-      groups.push({
-        dateKey,
-        heading: formatDateHeading(date),
-        year: date.getFullYear(),
-        items: [transaction],
-      });
-    }
-  }
 
   const calendarTransactions = transactions.map((transaction) => {
     const date = transaction.occurredOn;
@@ -61,6 +18,20 @@ export default async function History() {
       amount: transaction.amount,
       occurredTime: transaction.occurredTime,
       dateKey: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
+    };
+  });
+
+  const historyItems = transactions.map((transaction) => {
+    const date = transaction.occurredOn;
+    return {
+      id: transaction.id,
+      merchantName: transaction.merchantName,
+      amount: transaction.amount,
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+      dateKey: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
+      kind: transaction.sources[0]?.kind ?? "manual",
     };
   });
 
@@ -78,54 +49,7 @@ export default async function History() {
 
       <HistoryCalendar transactions={calendarTransactions} />
 
-      <div className="flex flex-col gap-6 px-5 pt-6 pb-8">
-        {groups.length === 0 && (
-          <p className="pt-8 text-center text-sm text-neutral-400">
-            아직 등록된 기록이 없습니다.
-          </p>
-        )}
-
-        {groups.map((group, index) => {
-          const isNewYear = index === 0 || groups[index - 1].year !== group.year;
-          return (
-            <section
-              key={group.dateKey}
-              className={
-                isNewYear && index > 0
-                  ? "border-t border-neutral-100 pt-6"
-                  : undefined
-              }
-            >
-              <h3 className="text-sm font-semibold text-neutral-500">
-                {group.heading}
-              </h3>
-              <div className="mt-3 divide-y divide-neutral-100 rounded-2xl bg-neutral-50 shadow-sm">
-                {group.items.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/history/${item.id}`}
-                    className="flex items-center justify-between px-4 py-3 active:bg-neutral-100"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-orange-100 text-base">
-                        {KIND_ICON[item.sources[0]?.kind ?? "manual"] ?? "✍️"}
-                      </span>
-                      <div>
-                        <p className="text-sm font-medium">
-                          {item.merchantName}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-sm font-semibold">
-                      {formatWon(item.amount)}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          );
-        })}
-      </div>
+      <HistoryList items={historyItems} />
     </main>
   );
 }
