@@ -10,18 +10,28 @@
     --bg: #ffffff;
     --fg: #171717;
     --n-900: #171717;
+    --n-700: #404040;
     --n-500: #737373;
     --n-400: #a3a3a3;
+    --n-200: #e5e5e5;
     --n-100: #f5f5f5;
     --n-50: #fafafa;
     --violet-100: #ede9fe;
+    --violet-300: #c4b5fd;
+    --violet-500: #8b5cf6;
+    --violet-600: #7c3aed;
     --violet-700: #6d28d9;
+    --fuchsia-500: #d946ef;
+    --fuchsia-600: #c026d3;
     --orange-100: #ffedd5;
     --orange-700: #c2410c;
+    --red-50: #fef2f2;
+    --red-100: #fee2e2;
+    --red-600: #dc2626;
     --line: rgba(0,0,0,0.08);
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0;
     padding: 0;
@@ -41,12 +51,7 @@
     padding: 24px 12px;
   }
 
-  .stage-label {
-    font-size: 13px;
-    color: #666;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
+  .stage-label { font-size: 13px; color: #666; font-weight: 600; letter-spacing: 0.02em; }
 
   .phone {
     position: relative;
@@ -59,116 +64,57 @@
     box-shadow: 0 30px 60px rgba(0,0,0,0.35);
     overflow: hidden;
   }
+  .phone-screen { position: absolute; inset: 0; overflow: hidden; }
 
-  .phone-screen {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-  }
-
-  /* On real mobile viewports, drop the decorative phone chrome entirely */
   @media (max-width: 480px), (max-height: 700px) {
     body { background: var(--bg); }
     .stage { padding: 0; gap: 0; }
     .stage-label { display: none; }
-    .phone {
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      max-height: none;
-      border-radius: 0;
-      border: none;
-      box-shadow: none;
-    }
+    .phone { width: 100vw; height: 100vh; height: 100dvh; max-height: none; border-radius: 0; border: none; box-shadow: none; }
   }
 
-  .screen {
-    position: absolute;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    background: var(--bg);
-    padding-bottom: 88px;
-  }
+  .screen { position: absolute; inset: 0; display: none; flex-direction: column; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg); padding-bottom: 88px; }
   .screen.active { display: flex; }
 
-  a, button, input, label { font-family: inherit; }
+  a, button, input, label, textarea { font-family: inherit; }
   button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+  input, textarea { font-size: 14px; }
 
   /* ---------- Home ---------- */
-  .hero {
-    position: relative;
-    flex: none;
-    padding: 32px 20px 40px;
-    color: #fff;
-    background: var(--hero);
-    overflow: hidden;
-  }
-  .hero .blob-a {
-    position: absolute; right: -64px; top: 160px; width: 256px; height: 256px;
-    border-radius: 999px; background: rgba(253,186,116,0.3); filter: blur(60px); pointer-events: none;
-  }
-  .hero .blob-b {
-    position: absolute; left: -80px; bottom: 96px; width: 288px; height: 288px;
-    border-radius: 999px; background: rgba(232,121,249,0.2); filter: blur(60px); pointer-events: none;
-  }
+  .hero { position: relative; flex: none; padding: 32px 20px 40px; color: #fff; background: var(--hero); overflow: hidden; }
+  .hero .blob-a { position: absolute; right: -64px; top: 160px; width: 256px; height: 256px; border-radius: 999px; background: rgba(253,186,116,0.3); filter: blur(60px); pointer-events: none; }
+  .hero .blob-b { position: absolute; left: -80px; bottom: 96px; width: 288px; height: 288px; border-radius: 999px; background: rgba(232,121,249,0.2); filter: blur(60px); pointer-events: none; }
   .brand { position: relative; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
   .hero h1 { position: relative; margin: 28px 0 0; font-size: 26px; font-weight: 700; line-height: 1.3; }
   .hero p.sub { position: relative; margin: 8px 0 0; font-size: 14px; color: rgba(255,255,255,0.8); }
-  .badge {
-    position: relative; margin-top: 16px; display: inline-flex; align-items: center; gap: 6px;
-    width: fit-content; border-radius: 999px; background: rgba(255,255,255,0.15);
-    padding: 6px 12px; font-size: 12px; font-weight: 500;
-  }
+  .badge { position: relative; margin-top: 16px; display: inline-flex; align-items: center; gap: 6px; width: fit-content; border-radius: 999px; background: rgba(255,255,255,0.15); padding: 6px 12px; font-size: 12px; font-weight: 500; }
 
-  .input-grid {
-    position: relative; margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  }
-  .upload-card {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    border-radius: 16px; background: rgba(255,255,255,0.95); padding: 24px 8px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06); text-align: center; text-decoration: none;
-    color: inherit; transition: background 0.15s;
-  }
+  .input-grid { position: relative; margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .upload-card { display: flex; flex-direction: column; align-items: center; gap: 8px; border-radius: 16px; background: rgba(255,255,255,0.95); padding: 24px 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); text-align: center; text-decoration: none; color: inherit; transition: background 0.15s; }
+  .upload-card.disabled { opacity: 0.6; pointer-events: none; }
   .upload-card:active { background: #fff; }
-  .upload-card .icon-circle {
-    display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
-    border-radius: 999px; background: linear-gradient(135deg, var(--violet-100), var(--orange-100));
-    font-size: 22px;
-  }
+  .upload-card .icon-circle { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 999px; background: linear-gradient(135deg, var(--violet-100), var(--orange-100)); font-size: 22px; }
   .upload-card .label { font-size: 14px; font-weight: 500; color: #262626; }
   .upload-card input[type=file] { display: none; }
 
   .status-line { position: relative; margin-top: 12px; text-align: center; font-size: 12px; color: rgba(255,255,255,0.85); min-height: 16px; }
 
-  .month-card {
-    position: relative; margin-top: 24px; border-radius: 16px; background: rgba(255,255,255,0.95);
-    padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-  }
+  .month-card { position: relative; margin-top: 24px; border-radius: 16px; background: rgba(255,255,255,0.95); padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
   .month-card .cap { font-size: 12px; color: var(--n-500); }
   .month-card .val { margin-top: 4px; font-size: 20px; font-weight: 700; color: var(--n-900); }
 
-  /* ---------- Section headers (history / monthly) ---------- */
-  .page-hero {
-    flex: none; border-radius: 0 0 32px 32px; padding: 32px 20px 24px; color: #fff; background: var(--hero);
-  }
+  /* ---------- Section headers ---------- */
+  .page-hero { flex: none; border-radius: 0 0 32px 32px; padding: 32px 20px 24px; color: #fff; background: var(--hero); }
   .page-hero h1 { margin: 0; font-size: 18px; font-weight: 700; }
   .page-hero .total { margin: 16px 0 0; font-size: 36px; font-weight: 800; letter-spacing: -0.01em; }
   .page-hero .compare { margin: 8px 0 0; font-size: 14px; color: rgba(255,255,255,0.85); }
+  .page-hero .back-link-white { font-size: 14px; color: rgba(255,255,255,0.7); background: none; padding: 0; }
 
   .section { padding: 24px 20px 8px; }
   .section-title { margin: 0; font-size: 14px; font-weight: 600; color: var(--n-500); }
 
-  .list {
-    margin-top: 12px; border-radius: 16px; background: var(--n-50); box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-    overflow: hidden;
-  }
-  .list-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px 16px; border-bottom: 1px solid var(--n-100);
-  }
+  .list { margin-top: 12px; border-radius: 16px; background: var(--n-50); box-shadow: 0 1px 2px rgba(0,0,0,0.06); overflow: hidden; }
+  .list-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--n-100); }
   .list-row:last-child { border-bottom: none; }
   .list-row.clickable { width: 100%; text-align: left; }
   .list-row.clickable:active { background: rgba(0,0,0,0.03); }
@@ -177,101 +123,100 @@
   .row-left .meta { margin-top: 2px; font-size: 12px; color: var(--n-400); }
   .row-amount { flex: none; font-size: 14px; font-weight: 600; color: var(--n-900); }
 
-  .icon-badge {
-    flex: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;
-    border-radius: 999px; background: linear-gradient(135deg, var(--violet-100), var(--orange-100)); font-size: 16px;
-  }
-  .rank-badge {
-    flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;
-    border-radius: 999px; font-size: 11px; font-weight: 600;
-  }
+  .icon-badge { flex: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 999px; background: linear-gradient(135deg, var(--violet-100), var(--orange-100)); font-size: 16px; }
+  .rank-badge { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; font-size: 11px; font-weight: 600; }
   .rank-badge.violet { background: var(--violet-100); color: var(--violet-700); }
   .rank-badge.orange { background: var(--orange-100); color: var(--orange-700); }
 
   .empty-msg { padding: 32px 0; text-align: center; font-size: 14px; color: var(--n-400); }
 
+  .year-sep { border-top: 1px solid var(--n-100); padding-top: 24px; }
+
+  /* ---------- Search ---------- */
+  .search-wrap { padding: 24px 20px 0; }
+  .search-input { width: 100%; border-radius: 16px; border: 1px solid var(--n-200); background: var(--n-50); padding: 12px 16px; font-size: 14px; color: var(--n-900); outline: none; }
+  .search-input:focus { border-color: var(--violet-300); }
+  .search-input::placeholder { color: var(--n-400); }
+
+  /* ---------- Calendar ---------- */
+  .cal-section { padding: 24px 20px 0; }
+  .cal-card { border-radius: 24px; background: var(--n-50); padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+  .cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .cal-nav-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; color: var(--violet-500); font-size: 15px; }
+  .cal-nav-btn:active { background: var(--violet-100); }
+  .cal-title { font-size: 14px; font-weight: 600; color: var(--n-900); }
+  .weekday-row { margin-top: 16px; display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; color: var(--n-400); }
+  .weekday-row span { padding: 4px 0; }
+  .day-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 8px; text-align: center; }
+  .day-cell { margin: 0 auto; display: flex; height: 44px; width: 44px; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 999px; font-size: 14px; color: #262626; transition: background 0.1s; }
+  .day-cell:active { background: var(--n-100); }
+  .day-cell.today { font-weight: 600; color: var(--violet-700); box-shadow: inset 0 0 0 1px var(--violet-300); }
+  .day-cell.selected { background: linear-gradient(135deg, var(--violet-600), var(--fuchsia-600)); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+  .day-dot { height: 4px; width: 4px; border-radius: 999px; background: transparent; }
+  .day-dot.on { background: var(--fuchsia-500); }
+  .day-cell.selected .day-dot.on { background: #fff; }
+
+  .day-list { margin-top: 16px; border-radius: 16px; background: var(--n-50); box-shadow: 0 1px 2px rgba(0,0,0,0.06); overflow: hidden; }
+
   /* ---------- AI ---------- */
   .center-msg { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 20px; }
   .center-msg p { color: rgba(0,0,0,0.4); font-size: 14px; }
 
-  /* ---------- Write ---------- */
+  /* ---------- Write / Edit forms ---------- */
   .write-wrap { padding: 32px 20px 40px; }
   .back-link { font-size: 14px; color: var(--n-400); background: none; padding: 0; }
   .write-wrap h1 { margin: 16px 0 0; font-size: 20px; font-weight: 700; }
   .form { margin-top: 24px; display: flex; flex-direction: column; gap: 20px; }
   .field { display: flex; flex-direction: column; gap: 6px; }
   .field label { font-size: 12px; font-weight: 500; color: var(--n-500); }
-  .field input, .field textarea {
-    border-radius: 12px; border: 1px solid var(--n-100); padding: 10px 12px; font-size: 14px;
-    outline: none; background: #fff; color: var(--fg);
-  }
-  .field input:focus, .field textarea:focus { border-color: #c4b5fd; }
+  .field input, .field textarea { border-radius: 12px; border: 1px solid var(--n-100); padding: 10px 12px; font-size: 14px; outline: none; background: #fff; color: var(--fg); }
+  .field input:focus, .field textarea:focus { border-color: var(--violet-300); }
   .field textarea { resize: vertical; font-family: inherit; }
-  .btn-submit {
-    margin-top: 8px; border-radius: 16px; background: #171717; padding: 13px; font-size: 14px;
-    font-weight: 600; color: #fff; text-align: center;
-  }
+  .btn-submit { margin-top: 8px; border-radius: 16px; background: #171717; padding: 13px; font-size: 14px; font-weight: 600; color: #fff; text-align: center; }
   .btn-submit:active { background: #262626; }
-  .form-error { font-size: 13px; color: #dc2626; margin: -8px 0 0; }
+  .form-error { font-size: 13px; color: var(--red-600); margin: -8px 0 0; }
+
+  .btn-row { margin-top: 8px; display: flex; gap: 12px; }
+  .btn-row > * { flex: 1; }
+  .btn-outline { border-radius: 16px; border: 1px solid var(--n-200); padding: 13px; font-size: 14px; font-weight: 600; color: var(--n-700); text-align: center; }
+  .btn-outline:active { background: var(--n-100); }
+  .btn-dark { border-radius: 16px; background: #171717; padding: 13px; font-size: 14px; font-weight: 600; color: #fff; text-align: center; }
+  .btn-dark:active { background: #262626; }
+  .btn-danger { border-radius: 16px; background: var(--red-50); padding: 13px; font-size: 14px; font-weight: 600; color: var(--red-600); text-align: center; width: 100%; }
+  .btn-danger:active { background: var(--red-100); }
 
   /* ---------- Detail ---------- */
-  .detail-wrap { padding: 32px 20px 40px; }
-  .detail-amount-block { margin-top: 24px; }
-  .detail-amount-block .merchant { font-size: 20px; font-weight: 700; color: var(--n-900); }
-  .detail-amount-block .amount { margin-top: 6px; font-size: 30px; font-weight: 800; letter-spacing: -0.01em; }
-  .detail-meta {
-    margin-top: 20px; border-radius: 16px; background: var(--n-50); padding: 4px 16px;
-  }
-  .detail-meta .row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--n-100); font-size: 13px; }
-  .detail-meta .row:last-child { border-bottom: none; }
-  .detail-meta .row .k { color: var(--n-500); }
-  .detail-meta .row .v { color: var(--n-900); font-weight: 500; }
+  .detail-body { padding: 24px 20px 40px; display: flex; flex-direction: column; gap: 24px; }
 
-  .source-box {
-    margin-top: 12px; border-radius: 16px; border: 1.5px dashed #d4d4d4; background: var(--n-50);
-    padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
-  }
-  .source-box .icon { font-size: 32px; }
-  .source-box .cap { font-size: 13px; font-weight: 600; color: var(--n-900); }
-  .source-box .sub { font-size: 12px; color: var(--n-400); }
-  .source-text {
-    margin-top: 12px; border-radius: 16px; background: var(--n-50); padding: 14px 16px; font-size: 13px;
-    color: var(--n-900); line-height: 1.6; white-space: pre-wrap;
-  }
+  .image-row { margin-top: 12px; display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+  .image-thumb { flex: none; height: 168px; width: auto; border-radius: 16px; border: 1px solid var(--n-100); object-fit: cover; display: block; }
+  .image-modal { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); padding: 16px; }
+  .image-modal img { max-height: 100%; max-width: 100%; border-radius: 16px; object-fit: contain; }
+  .modal-close { position: absolute; right: 20px; top: 20px; display: flex; height: 36px; width: 36px; align-items: center; justify-content: center; border-radius: 999px; background: rgba(255,255,255,0.1); color: #fff; font-size: 20px; }
+  .modal-close:active { background: rgba(255,255,255,0.2); }
 
-  .lineitems { margin-top: 12px; border-radius: 16px; background: var(--n-50); overflow: hidden; }
-  .lineitems .li-row { display: flex; justify-content: space-between; padding: 10px 16px; font-size: 13px; border-bottom: 1px solid var(--n-100); }
-  .lineitems .li-row:last-child { border-bottom: none; }
-  .lineitems .li-row .n { color: var(--n-900); }
-  .lineitems .li-row .a { color: var(--n-500); }
+  .li-table { margin-top: 12px; border-radius: 16px; background: var(--n-50); box-shadow: 0 1px 2px rgba(0,0,0,0.06); overflow: hidden; }
+  .li-head { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; padding: 8px 16px; font-size: 11px; font-weight: 500; color: var(--n-400); }
+  .li-head span { text-align: right; }
+  .li-head span:first-child { text-align: left; }
+  .li-row { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--n-100); }
+  .li-row .n { font-size: 14px; font-weight: 500; }
+  .li-row .dash { text-align: right; font-size: 14px; color: var(--n-400); }
+  .li-row .a { text-align: right; font-size: 14px; font-weight: 600; }
 
   /* ---------- Bottom nav ---------- */
-  .bottom-nav {
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 10;
-    border-top: 1px solid var(--line); background: var(--bg);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+  .bottom-nav { position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; border-top: 1px solid var(--line); background: var(--bg); padding-bottom: env(safe-area-inset-bottom); }
   .bottom-nav .row { display: flex; align-items: stretch; }
-  .nav-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    padding: 8px 0; font-size: 11px; color: rgba(0,0,0,0.4); text-decoration: none;
-  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; font-size: 11px; color: rgba(0,0,0,0.4); text-decoration: none; }
   .nav-item .ic { font-size: 20px; line-height: 1; }
   .nav-item.active { color: var(--fg); font-weight: 600; }
 
-  .toast {
-    position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%);
-    background: rgba(23,23,23,0.92); color: #fff; font-size: 13px; padding: 10px 16px;
-    border-radius: 999px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-    z-index: 20; max-width: 85%; overflow: hidden; text-overflow: ellipsis;
-  }
-  .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 
 <div class="stage">
-  <div class="stage-label">가계Ro · 모바일 인터랙티브 목업 (샘플 데이터)</div>
+  <div class="stage-label">가계Ro · 모바일 인터랙티브 목업 (샘플 데이터, 최신 원본 기준)</div>
   <div class="phone">
     <div class="phone-screen" id="phone-screen">
 
@@ -318,21 +263,29 @@
 
       <!-- HISTORY -->
       <section class="screen" data-route="history">
-        <div class="page-hero" style="border-radius:0 0 32px 32px; padding-bottom:24px;">
+        <div class="page-hero" style="padding-bottom:24px;">
           <h1>내역</h1>
         </div>
-        <div class="section" style="padding-top:24px;" id="history-list"></div>
+        <div class="cal-section" id="history-calendar"></div>
+        <div class="search-wrap" id="history-search"></div>
+        <div class="section" id="history-list"></div>
       </section>
 
       <!-- DETAIL -->
       <section class="screen" data-route="detail">
-        <div class="detail-wrap" id="detail-body"></div>
+        <div id="detail-hero"></div>
+        <div class="detail-body" id="detail-body"></div>
+      </section>
+
+      <!-- EDIT -->
+      <section class="screen" data-route="edit">
+        <div class="write-wrap" id="edit-body"></div>
       </section>
 
       <!-- MONTHLY -->
       <section class="screen" data-route="monthly">
         <div class="page-hero">
-          <h1>이번 달</h1>
+          <h1 id="monthly-heading">이번 달</h1>
           <p class="total" id="monthly-total">0원</p>
           <p class="compare" id="monthly-compare"></p>
         </div>
@@ -354,16 +307,12 @@
       <!-- WRITE -->
       <section class="screen" data-route="write">
         <div class="write-wrap">
-          <button class="back-link" data-nav="home">← 취소</button>
+          <a class="back-link" href="#/">← 취소</a>
           <h1>글쓰기로 등록</h1>
           <form class="form" id="write-form">
             <div class="field">
               <label for="f-date">날짜</label>
               <input id="f-date" name="occurredOn" type="date" required />
-            </div>
-            <div class="field">
-              <label for="f-time">시간 (선택)</label>
-              <input id="f-time" name="occurredTime" type="time" />
             </div>
             <div class="field">
               <label for="f-merchant">사용처</label>
@@ -393,7 +342,6 @@
         </div>
       </nav>
 
-      <div class="toast" id="toast"></div>
     </div>
   </div>
 </div>
@@ -402,40 +350,59 @@
 (function () {
   "use strict";
 
-  // ---------------------------------------------------------------------
-  // Sample data (in-memory only — no server / DB, mirrors prisma schema)
-  // ---------------------------------------------------------------------
+  // =======================================================================
+  // Sample data layer — mirrors the current Prisma schema (Transaction /
+  // Source / LineItem) and the dedup rule actually implemented in
+  // app/lib/uploadActions.ts (merchantName + occurredOn + amount; time is
+  // no longer part of the key). No server/DB — everything lives in memory.
+  // =======================================================================
   var KIND_ICON = { receipt: "🧾", voice: "🎤", manual: "✍️", screenshot: "🖼️", file: "📁" };
-  var KIND_LABEL = { receipt: "촬영 등록 (영수증 사진)", voice: "말하기", manual: "글로 등록", screenshot: "캡처 등록", file: "파일 등록" };
 
   var nextId = 1;
-  function ymd(d) {
-    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  var nextSourceId = 1;
+  function ymd(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function addDays(base, n) { var d = new Date(base); d.setDate(d.getDate() + n); return d; }
+  function addMonths(base, n) { var d = new Date(base); d.setMonth(d.getMonth() + n); return d; }
+  function dateFromYmd(str) { var p = str.split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+
+  function receiptSvg(merchantName, amount, tone) {
+    var colors = tone === "b" ? ["#f5f3ff", "#7c3aed"] : tone === "c" ? ["#fff7ed", "#c2410c"] : ["#fdf4ff", "#c026d3"];
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="360" height="480">' +
+      '<rect width="360" height="480" rx="20" fill="' + colors[0] + '"/>' +
+      '<rect x="24" y="24" width="312" height="432" rx="14" fill="#ffffff" stroke="#eee" stroke-width="2"/>' +
+      '<text x="180" y="90" font-size="34" text-anchor="middle">🧾</text>' +
+      '<text x="180" y="150" font-size="17" font-family="sans-serif" font-weight="700" fill="#171717" text-anchor="middle">' + escapeXml(merchantName) + '</text>' +
+      '<line x1="56" y1="180" x2="304" y2="180" stroke="#eee" stroke-width="2" stroke-dasharray="6 6"/>' +
+      '<text x="180" y="230" font-size="26" font-family="sans-serif" font-weight="800" fill="' + colors[1] + '" text-anchor="middle">' + amount.toLocaleString("ko-KR") + '원</text>' +
+      '<text x="180" y="440" font-size="12" font-family="sans-serif" fill="#a3a3a3" text-anchor="middle">샘플 목업 원본 이미지</text>' +
+      '</svg>';
+    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
   }
-  function addDays(base, n) {
-    var d = new Date(base);
-    d.setDate(d.getDate() + n);
-    return d;
+  function escapeXml(str) { return String(str).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[c]; }); }
+  function escapeHtml(str) { return String(str).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  function makeSource(kind, opts) {
+    opts = opts || {};
+    var isImage = opts.isImage !== undefined ? opts.isImage : (kind === "receipt" || kind === "screenshot" || kind === "file");
+    var filePath = isImage ? receiptSvg(opts.merchantName || "", opts.amount || 0, opts.tone || "a") : (kind === "file" ? "invoice.pdf" : null);
+    return { id: nextSourceId++, kind: kind, filePath: filePath, isImage: !!(isImage && filePath) };
   }
-  function addMonths(base, n) {
-    var d = new Date(base);
-    d.setMonth(d.getMonth() + n);
-    return d;
-  }
+
   function makeTx(daysOffset, time, merchantName, amount, kind, extra) {
+    extra = extra || {};
     var d = addDays(new Date(), daysOffset);
-    var tx = {
+    var sources = extra.sources || [makeSource(kind, { merchantName: merchantName, amount: amount, isImage: extra.isImage, tone: extra.tone })];
+    return {
       id: nextId++,
       occurredOn: ymd(d),
       occurredTime: time || null,
       merchantName: merchantName,
       amount: amount,
-      memo: (extra && extra.memo) || null,
-      kind: kind || "manual",
-      rawText: (extra && extra.rawText) || null,
-      lineItems: (extra && extra.lineItems) || [],
+      memo: extra.memo || null,
+      sources: sources,
+      lineItems: extra.lineItems || [],
     };
-    return tx;
   }
   function makeTxOnDate(dateObj, time, merchantName, amount, kind, extra) {
     var tx = makeTx(0, time, merchantName, amount, kind, extra);
@@ -447,73 +414,53 @@
   var lastMonthAnchor = addMonths(today, -1);
 
   var transactions = [
-    makeTx(0, "08:12", "스타벅스 강남점", 6800, "receipt", { lineItems: [{ name: "카페라떼", amount: 5000 }, { name: "사이즈업", amount: 1800 }] }),
-    makeTx(0, "13:04", "김밥천국", 8000, "receipt"),
-    makeTx(0, "19:41", "CU 편의점", 4500, "receipt"),
-    makeTx(-1, "12:20", "이마트 장보기", 63200, "screenshot", {
-      lineItems: [{ name: "우유", amount: 3200 }, { name: "계란 한판", amount: 7500 }, { name: "생필품 외", amount: 52500 }],
-    }),
-    makeTx(-1, null, "친구에게 점심값 정산", 15000, "voice", { rawText: "어제 친구랑 점심 먹은거 만오천원 정산" }),
+    makeTx(0, "08:12", "스타벅스 강남점", 6800, "receipt", { tone: "b", lineItems: [{ name: "카페라떼", amount: 5000 }, { name: "사이즈업", amount: 1800 }] }),
+    makeTx(0, null, "김밥천국", 8000, "receipt", { tone: "c", lineItems: [{ name: "김밥", amount: 3000 }, { name: "라면", amount: 5000 }] }),
+    makeTx(0, null, "GS25", 3200, "receipt"),
+    makeTx(-1, null, "이마트 장보기", 63200, "screenshot", { tone: "b", lineItems: [{ name: "우유", amount: 3200 }, { name: "계란 한판", amount: 7500 }, { name: "생필품 외", amount: 52500 }] }),
+    makeTx(-1, "19:40", "쿠팡", 32900, "screenshot"),
     makeTx(-3, "20:10", "배달의민족", 18700, "screenshot"),
-    makeTx(-5, "09:30", "GS25", 3200, "receipt"),
-    makeTx(-12, "18:00", "넷플릭스 정기결제", 17000, "file", { rawText: "이메일 영수증 PDF" }),
-    makeTx(-12, null, "KT 통신요금", 55000, "file"),
-    makeTx(-18, "11:15", "올리브영", 24700, "receipt"),
+    makeTx(-3, "20:10", "CU 편의점", 4500, "screenshot", { tone: "c" }),
+    makeTx(-5, null, "올리브영", 24700, "receipt", { tone: "b", lineItems: [{ name: "클렌징폼", amount: 12000 }, { name: "선크림", amount: 12700 }] }),
+    makeTx(-12, null, "넷플릭스 정기결제", 17000, "file", { isImage: false, memo: null }),
+    makeTx(-12, null, "국민연금공단", 220000, "file", { isImage: false }),
+    makeTx(-18, "11:15", "KT 통신요금", 55000, "file", { tone: "c" }),
   ];
 
-  // A couple of transactions in the *previous* month, within the same
-  // day-of-month window, so the "지난달 같은 기간 비교" stat has data.
-  transactions.push(makeTxOnDate(new Date(lastMonthAnchor.getFullYear(), lastMonthAnchor.getMonth(), Math.max(1, today.getDate() - 6)), "09:00", "스타벅스 강남점", 6800, "receipt"));
-  transactions.push(makeTxOnDate(new Date(lastMonthAnchor.getFullYear(), lastMonthAnchor.getMonth(), Math.max(1, today.getDate() - 2)), "19:00", "이마트 장보기", 41200, "screenshot"));
+  // Previous-month seed data — kept small on purpose so the "지난달 지출
+  // 내역이 없습니다" branch in the 이번 달 화면 (getLastMonthTotal() === null)
+  // can be reproduced by simply deleting these two from the 거래 상세 화면,
+  // exactly like the real app would behave once last month's rows are gone.
+  transactions.push(makeTxOnDate(new Date(lastMonthAnchor.getFullYear(), lastMonthAnchor.getMonth(), Math.max(1, today.getDate() - 6)), null, "스타벅스 강남점", 6800, "receipt", { tone: "b" }));
   transactions.push(makeTxOnDate(new Date(lastMonthAnchor.getFullYear(), lastMonthAnchor.getMonth(), Math.max(1, today.getDate() - 1)), null, "월세", 550000, "manual"));
 
-  var UPLOAD_POOL = {
-    receipt: [
-      { merchantName: "스타벅스 강남점", amount: 6800 },
-      { merchantName: "CU 편의점", amount: 4500 },
-      { merchantName: "김밥천국", amount: 8000 },
-      { merchantName: "올리브영", amount: 24700 },
-    ],
-    screenshot: [
-      { merchantName: "쿠팡", amount: 32900 },
-      { merchantName: "배달의민족", amount: 18700 },
-    ],
-    file: [
-      { merchantName: "국민연금공단", amount: 220000 },
-      { merchantName: "KT 통신요금", amount: 55000 },
-    ],
-  };
+  var RECEIPT_POOL = [
+    { merchantName: "스타벅스 강남점", amount: 6800, lineItems: [{ name: "카페라떼", amount: 5000 }, { name: "사이즈업", amount: 1800 }], tone: "b" },
+    { merchantName: "GS25", amount: 3200, lineItems: [], tone: "a" },
+    { merchantName: "김밥천국", amount: 8000, lineItems: [{ name: "김밥", amount: 3000 }, { name: "라면", amount: 5000 }], tone: "c" },
+    { merchantName: "올리브영", amount: 24700, lineItems: [{ name: "클렌징폼", amount: 12000 }, { name: "선크림", amount: 12700 }], tone: "b" },
+  ];
+  // 카드 이용내역처럼 한 장의 캡처에서 여러 거래가 함께 인식되는 경우를 포함한다.
+  var SCREENSHOT_POOL = [
+    [{ merchantName: "배달의민족", amount: 18700, tone: "a" }],
+    [{ merchantName: "쿠팡", amount: 32900, tone: "b" }],
+    [{ merchantName: "CU 편의점", amount: 4500, tone: "c" }, { merchantName: "스타벅스 강남점", amount: 6800, tone: "b" }],
+    [{ merchantName: "이마트", amount: 15000, tone: "a" }, { merchantName: "교보문고", amount: 22000, tone: "b" }, { merchantName: "CGV", amount: 14000, tone: "c" }],
+  ];
+  var FILE_POOL = [
+    { merchantName: "KT 통신요금", amount: 55000, isImage: true, tone: "c" },
+    { merchantName: "국민연금공단", amount: 220000, isImage: false },
+    { merchantName: "넷플릭스 정기결제", amount: 17000, isImage: false },
+  ];
 
-  function pad2(n) { return String(n).padStart(2, "0"); }
-  function nowTimeStr() {
-    var d = new Date();
-    return pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  function findDuplicate(merchantName, occurredOn, amount) {
+    return transactions.find(function (t) { return t.merchantName === merchantName && t.occurredOn === occurredOn && t.amount === amount; });
   }
 
-  function findDuplicate(merchantName, occurredOn, occurredTime, amount) {
-    return transactions.find(function (t) {
-      return t.merchantName === merchantName && t.occurredOn === occurredOn && t.occurredTime === occurredTime && t.amount === amount;
-    });
-  }
-
-  // ---------------------------------------------------------------------
-  // Formatting helpers (mirror app/page.tsx & friends)
-  // ---------------------------------------------------------------------
   function formatWon(amount) { return amount.toLocaleString("ko-KR") + "원"; }
-  function dateFromYmd(ymdStr) {
-    var parts = ymdStr.split("-").map(Number);
-    return new Date(parts[0], parts[1] - 1, parts[2]);
-  }
-  function formatDateHeading(ymdStr) {
-    return dateFromYmd(ymdStr).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
-  }
-  function formatDateFull(ymdStr) {
-    return dateFromYmd(ymdStr).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
-  }
+  function formatDateHeading(ymdStr) { var d = dateFromYmd(ymdStr); return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월 " + d.getDate() + "일"; }
+  function formatDateShort(ymdStr) { var d = dateFromYmd(ymdStr); return (d.getMonth() + 1) + "월 " + d.getDate() + "일"; }
 
-  // ---------------------------------------------------------------------
-  // Summary queries (mirror app/lib/summary.ts)
-  // ---------------------------------------------------------------------
   function getSortedTransactions() {
     return transactions.slice().sort(function (a, b) {
       if (a.occurredOn !== b.occurredOn) return a.occurredOn < b.occurredOn ? 1 : -1;
@@ -521,32 +468,28 @@
     });
   }
 
+  // ---------------------------------------------------------------------
+  // Summary queries (mirror app/lib/summary.ts exactly, including the
+  // "지난달 전체 합계, 거래 없으면 null" behavior added in the latest 원본)
+  // ---------------------------------------------------------------------
   function currentMonthRange() {
     var now = new Date();
-    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    var nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    return { monthStart: monthStart, nextMonthStart: nextMonthStart };
+    return { monthStart: new Date(now.getFullYear(), now.getMonth(), 1), nextMonthStart: new Date(now.getFullYear(), now.getMonth() + 1, 1) };
   }
-
-  function inRange(ymdStr, start, endExclusive) {
-    var d = dateFromYmd(ymdStr);
-    return d >= start && d < endExclusive;
-  }
+  function inRange(ymdStr, start, endExclusive) { var d = dateFromYmd(ymdStr); return d >= start && d < endExclusive; }
 
   function getCurrentMonthTotal() {
     var r = currentMonthRange();
-    return transactions.filter(function (t) { return inRange(t.occurredOn, r.monthStart, r.nextMonthStart); })
-      .reduce(function (sum, t) { return sum + t.amount; }, 0);
+    return transactions.filter(function (t) { return inRange(t.occurredOn, r.monthStart, r.nextMonthStart); }).reduce(function (s, t) { return s + t.amount; }, 0);
   }
-
-  function getLastMonthSamePeriodTotal() {
+  function getLastMonthTotal() {
     var now = new Date();
     var lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    var lastMonthSamePeriodEnd = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate() + 1);
-    return transactions.filter(function (t) { return inRange(t.occurredOn, lastMonthStart, lastMonthSamePeriodEnd); })
-      .reduce(function (sum, t) { return sum + t.amount; }, 0);
+    var lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
+    var inLastMonth = transactions.filter(function (t) { return inRange(t.occurredOn, lastMonthStart, lastMonthEnd); });
+    if (inLastMonth.length === 0) return null;
+    return inLastMonth.reduce(function (s, t) { return s + t.amount; }, 0);
   }
-
   function getTopMerchantsThisMonth(limit) {
     var r = currentMonthRange();
     var byMerchant = {};
@@ -558,175 +501,16 @@
     });
     return Object.values(byMerchant).sort(function (a, b) { return b.totalAmount - a.totalAmount; }).slice(0, limit);
   }
-
   function getTopExpensesThisMonth(limit) {
     var r = currentMonthRange();
-    return transactions.filter(function (t) { return inRange(t.occurredOn, r.monthStart, r.nextMonthStart); })
-      .sort(function (a, b) { return b.amount - a.amount; })
-      .slice(0, limit);
+    return transactions.filter(function (t) { return inRange(t.occurredOn, r.monthStart, r.nextMonthStart); }).sort(function (a, b) { return b.amount - a.amount; }).slice(0, limit);
   }
 
-  // ---------------------------------------------------------------------
-  // Toast
-  // ---------------------------------------------------------------------
-  var toastEl = document.getElementById("toast");
-  var toastTimer = null;
-  function showToast(text) {
-    toastEl.textContent = text;
-    toastEl.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 1800);
-  }
+  // =======================================================================
+  // HOME
+  // =======================================================================
+  function renderHome() { document.getElementById("home-month-total").textContent = formatWon(getCurrentMonthTotal()); }
 
-  // ---------------------------------------------------------------------
-  // Renderers
-  // ---------------------------------------------------------------------
-  function renderHome() {
-    document.getElementById("home-month-total").textContent = formatWon(getCurrentMonthTotal());
-  }
-
-  function rowMarkup(t) {
-    return (
-      '<button class="list-row clickable" data-open-detail="' + t.id + '">' +
-        '<div class="row-left">' +
-          '<span class="icon-badge">' + (KIND_ICON[t.kind] || "✍️") + "</span>" +
-          '<div>' +
-            '<p class="name">' + escapeHtml(t.merchantName) + "</p>" +
-            '<p class="meta">' + (t.occurredTime || "시간 미상") + "</p>" +
-          "</div>" +
-        "</div>" +
-        '<span class="row-amount">' + formatWon(t.amount) + "</span>" +
-      "</button>"
-    );
-  }
-
-  function escapeHtml(str) {
-    return String(str).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-
-  function renderHistory() {
-    var sorted = getSortedTransactions();
-    var groups = [];
-    sorted.forEach(function (t) {
-      var last = groups[groups.length - 1];
-      if (last && last.dateKey === t.occurredOn) {
-        last.items.push(t);
-      } else {
-        groups.push({ dateKey: t.occurredOn, heading: formatDateHeading(t.occurredOn), items: [t] });
-      }
-    });
-
-    var el = document.getElementById("history-list");
-    if (groups.length === 0) {
-      el.innerHTML = '<p class="empty-msg">아직 등록된 기록이 없습니다.</p>';
-      return;
-    }
-    el.innerHTML = groups.map(function (g) {
-      return (
-        '<section style="margin-bottom:24px;">' +
-          '<h2 class="section-title">' + g.heading + "</h2>" +
-          '<div class="list" style="margin-top:12px;">' + g.items.map(rowMarkup).join("") + "</div>" +
-        "</section>"
-      );
-    }).join("");
-  }
-
-  function renderMonthly() {
-    var totalSpent = getCurrentMonthTotal();
-    var lastPeriod = getLastMonthSamePeriodTotal();
-    var diff = totalSpent - lastPeriod;
-    var diffLabel = diff >= 0 ? "더" : "적게";
-
-    document.getElementById("monthly-total").textContent = formatWon(totalSpent);
-    document.getElementById("monthly-compare").textContent = "지난달 같은 기간보다 " + formatWon(Math.abs(diff)) + " " + diffLabel + " 사용";
-
-    var merchants = getTopMerchantsThisMonth(5);
-    var merchantsEl = document.getElementById("monthly-merchants");
-    merchantsEl.innerHTML = merchants.length === 0
-      ? '<p class="empty-msg">아직 기록이 없어요</p>'
-      : merchants.map(function (m, i) {
-          return (
-            '<div class="list-row">' +
-              '<div class="row-left">' +
-                '<span class="rank-badge violet">' + (i + 1) + "</span>" +
-                '<div><p class="name">' + escapeHtml(m.merchantName) + '</p><p class="meta">' + m.count + "건</p></div>" +
-              "</div>" +
-              '<span class="row-amount">' + formatWon(m.totalAmount) + "</span>" +
-            "</div>"
-          );
-        }).join("");
-
-    var expenses = getTopExpensesThisMonth(5);
-    var expensesEl = document.getElementById("monthly-expenses");
-    expensesEl.innerHTML = expenses.length === 0
-      ? '<p class="empty-msg">아직 기록이 없어요</p>'
-      : expenses.map(function (e, i) {
-          return (
-            '<button class="list-row clickable" data-open-detail="' + e.id + '">' +
-              '<div class="row-left">' +
-                '<span class="rank-badge orange">' + (i + 1) + "</span>" +
-                '<div><p class="name">' + escapeHtml(e.merchantName) + '</p><p class="meta">' + formatDateHeading(e.occurredOn) + "</p></div>" +
-              "</div>" +
-              '<span class="row-amount">' + formatWon(e.amount) + "</span>" +
-            "</button>"
-          );
-        }).join("");
-  }
-
-  function renderDetail(id) {
-    var t = transactions.find(function (x) { return x.id === id; });
-    var body = document.getElementById("detail-body");
-    if (!t) {
-      body.innerHTML = '<button class="back-link" data-nav="history">← 목록으로</button><p class="empty-msg">거래를 찾을 수 없습니다.</p>';
-      return;
-    }
-
-    var sourceMarkup;
-    if (t.kind === "voice" || t.kind === "manual") {
-      sourceMarkup = '<div class="source-text">' + escapeHtml(t.rawText || t.memo || "등록된 원문이 없습니다.") + "</div>";
-    } else {
-      var capMap = { receipt: "영수증 원본 이미지", screenshot: "캡처 이미지", file: "첨부 파일" };
-      sourceMarkup =
-        '<div class="source-box">' +
-          '<span class="icon">' + KIND_ICON[t.kind] + "</span>" +
-          '<span class="cap">' + (capMap[t.kind] || "원본 자료") + "</span>" +
-          '<span class="sub">샘플 목업에서는 실제 이미지를 표시하지 않습니다</span>' +
-        "</div>";
-    }
-
-    var lineItemsMarkup = "";
-    if (t.lineItems && t.lineItems.length > 0) {
-      lineItemsMarkup =
-        '<h2 class="section-title" style="margin-top:20px;">품목</h2>' +
-        '<div class="lineitems" style="margin-top:12px;">' +
-          t.lineItems.map(function (li) {
-            return '<div class="li-row"><span class="n">' + escapeHtml(li.name) + '</span><span class="a">' + formatWon(li.amount) + "</span></div>";
-          }).join("") +
-        "</div>";
-    }
-
-    body.innerHTML =
-      '<button class="back-link" data-nav="history">← 목록으로</button>' +
-      '<div class="detail-amount-block">' +
-        '<p class="merchant">' + escapeHtml(t.merchantName) + "</p>" +
-        '<p class="amount">' + formatWon(t.amount) + "</p>" +
-      "</div>" +
-      '<div class="detail-meta">' +
-        '<div class="row"><span class="k">날짜</span><span class="v">' + formatDateFull(t.occurredOn) + "</span></div>" +
-        '<div class="row"><span class="k">시간</span><span class="v">' + (t.occurredTime || "시간 미상") + "</span></div>" +
-        '<div class="row"><span class="k">등록 방법</span><span class="v">' + KIND_ICON[t.kind] + " " + KIND_LABEL[t.kind] + "</span></div>" +
-      "</div>" +
-      '<h2 class="section-title" style="margin-top:20px;">원본 확인</h2>' +
-      sourceMarkup +
-      (t.kind === "manual" && t.memo ? '<div class="source-text" style="margin-top:12px;">메모: ' + escapeHtml(t.memo) + "</div>" : "") +
-      lineItemsMarkup;
-  }
-
-  // ---------------------------------------------------------------------
-  // Upload simulation (mirrors app/components/InputGrid.tsx)
-  // ---------------------------------------------------------------------
   var homeStatus = document.getElementById("home-status");
   var uploadBusy = false;
 
@@ -736,27 +520,37 @@
     uploadBusy = true;
     homeStatus.textContent = "";
     var done = 0;
-    var duplicateSeen = false;
+    var duplicateTotal = 0;
 
     function step() {
       if (done >= list.length) {
         uploadBusy = false;
-        homeStatus.textContent = duplicateSeen ? "이미 등록된 내역입니다." : "";
+        homeStatus.textContent = duplicateTotal > 0 ? "이미 등록된 내역 " + duplicateTotal + "건은 건너뛰었습니다." : "";
         renderHome();
         return;
       }
       homeStatus.textContent = list.length + "개 자료 중 " + done + "개 처리 중";
       setTimeout(function () {
-        var pool = UPLOAD_POOL[kind] || UPLOAD_POOL.receipt;
-        var pick = pool[Math.floor(Math.random() * pool.length)];
+        var extracted = pickExtraction(kind);
         var occurredOn = ymd(new Date());
-        var occurredTime = nowTimeStr();
-        var dup = findDuplicate(pick.merchantName, occurredOn, occurredTime, pick.amount);
-        if (dup) {
-          duplicateSeen = true;
-        } else {
-          transactions.push(makeTxFromExtract(pick, occurredOn, occurredTime, kind));
-        }
+        extracted.forEach(function (pick) {
+          var existing = findDuplicate(pick.merchantName, occurredOn, pick.amount);
+          if (existing) {
+            existing.sources.push(makeSource(kind, { merchantName: pick.merchantName, amount: pick.amount, isImage: pick.isImage, tone: pick.tone }));
+            duplicateTotal += 1;
+          } else {
+            transactions.push({
+              id: nextId++,
+              occurredOn: occurredOn,
+              occurredTime: null,
+              merchantName: pick.merchantName,
+              amount: pick.amount,
+              memo: null,
+              sources: [makeSource(kind, { merchantName: pick.merchantName, amount: pick.amount, isImage: pick.isImage, tone: pick.tone })],
+              lineItems: pick.lineItems || [],
+            });
+          }
+        });
         done += 1;
         step();
       }, 500);
@@ -764,32 +558,357 @@
     step();
   }
 
-  function makeTxFromExtract(pick, occurredOn, occurredTime, kind) {
-    return {
-      id: nextId++,
-      occurredOn: occurredOn,
-      occurredTime: occurredTime,
-      merchantName: pick.merchantName,
-      amount: pick.amount,
-      memo: null,
-      kind: kind,
-      rawText: null,
-      lineItems: [],
-    };
+  function pickExtraction(kind) {
+    if (kind === "receipt") {
+      var r = RECEIPT_POOL[Math.floor(Math.random() * RECEIPT_POOL.length)];
+      return [r];
+    }
+    if (kind === "screenshot") {
+      var s = SCREENSHOT_POOL[Math.floor(Math.random() * SCREENSHOT_POOL.length)];
+      return s;
+    }
+    var f = FILE_POOL[Math.floor(Math.random() * FILE_POOL.length)];
+    return [f];
   }
 
   document.querySelectorAll(".upload-card[data-upload]").forEach(function (card) {
     var input = card.querySelector('input[type="file"]');
     var kind = card.getAttribute("data-upload");
-    input.addEventListener("change", function () {
-      handleUpload(kind, input.files);
-      input.value = "";
-    });
+    input.addEventListener("change", function () { handleUpload(kind, input.files); input.value = ""; });
   });
 
-  // ---------------------------------------------------------------------
-  // Write form (mirrors app/write/actions.ts)
-  // ---------------------------------------------------------------------
+  // =======================================================================
+  // HISTORY — 월간 달력(HistoryCalendar) + 검색·목록(HistoryList)
+  // =======================================================================
+  var WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
+  var calState = { year: today.getFullYear(), month: today.getMonth(), selectedDateKey: null };
+  var historyQuery = "";
+
+  function renderHistory() {
+    renderCalendar();
+    renderSearchBox();
+    renderHistoryList();
+  }
+
+  function renderCalendar() {
+    var year = calState.year, month = calState.month;
+    var todayKey = ymd(today);
+    var markedDates = {};
+    transactions.forEach(function (t) { markedDates[t.occurredOn] = true; });
+
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var startWeekday = new Date(year, month, 1).getDay();
+    var cells = [];
+    for (var i = 0; i < startWeekday; i++) cells.push(null);
+    for (var d = 1; d <= daysInMonth; d++) cells.push(d);
+
+    var dayCellsHtml = cells.map(function (day, index) {
+      if (day === null) return "<span></span>";
+      var key = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+      var hasTx = !!markedDates[key];
+      var isSelected = calState.selectedDateKey === key;
+      var isToday = key === todayKey;
+      var cls = "day-cell" + (isSelected ? " selected" : isToday ? " today" : "");
+      return (
+        '<button type="button" class="' + cls + '" data-day-key="' + key + '">' +
+          "<span>" + day + "</span>" +
+          '<span class="day-dot' + (hasTx ? " on" : "") + '"></span>' +
+        "</button>"
+      );
+    }).join("");
+
+    var selectedListHtml = "";
+    if (calState.selectedDateKey) {
+      var dayTx = transactions.filter(function (t) { return t.occurredOn === calState.selectedDateKey; });
+      selectedListHtml =
+        '<div class="day-list">' +
+        (dayTx.length === 0
+          ? '<p class="empty-msg">이 날짜에 등록된 거래가 없습니다.</p>'
+          : dayTx.map(function (t) {
+              return (
+                '<button class="list-row clickable" data-open-detail="' + t.id + '">' +
+                  '<div class="row-left"><div><p class="name">' + escapeHtml(t.merchantName) + "</p>" +
+                  (t.occurredTime ? '<p class="meta">' + t.occurredTime + "</p>" : "") +
+                  "</div></div>" +
+                  '<span class="row-amount">' + formatWon(t.amount) + "</span>" +
+                "</button>"
+              );
+            }).join("")) +
+        "</div>";
+    }
+
+    document.getElementById("history-calendar").innerHTML =
+      '<div class="cal-card">' +
+        '<div class="cal-head">' +
+          '<button type="button" class="cal-nav-btn" id="cal-prev" aria-label="이전 달">&lt;</button>' +
+          '<p class="cal-title">' + year + "년 " + (month + 1) + "월</p>" +
+          '<button type="button" class="cal-nav-btn" id="cal-next" aria-label="다음 달">&gt;</button>' +
+        "</div>" +
+        '<div class="weekday-row">' + WEEKDAY_LABELS.map(function (l) { return "<span>" + l + "</span>"; }).join("") + "</div>" +
+        '<div class="day-grid">' + dayCellsHtml + "</div>" +
+      "</div>" +
+      selectedListHtml;
+
+    document.getElementById("cal-prev").addEventListener("click", function () { goToMonth(-1); });
+    document.getElementById("cal-next").addEventListener("click", function () { goToMonth(1); });
+    document.querySelectorAll("#history-calendar [data-day-key]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-day-key");
+        calState.selectedDateKey = calState.selectedDateKey === key ? null : key;
+        renderCalendar();
+      });
+    });
+  }
+
+  function goToMonth(delta) {
+    calState.selectedDateKey = null;
+    var next = new Date(calState.year, calState.month + delta, 1);
+    calState.year = next.getFullYear();
+    calState.month = next.getMonth();
+    renderCalendar();
+  }
+
+  function renderSearchBox() {
+    var el = document.getElementById("history-search");
+    if (el.dataset.built) return;
+    el.dataset.built = "1";
+    el.innerHTML = '<input type="search" class="search-input" id="history-search-input" placeholder="상호명 또는 날짜 검색 (예: 이마트, 2017.06)" value="' + escapeHtml(historyQuery) + '" />';
+    document.getElementById("history-search-input").addEventListener("input", function (e) {
+      historyQuery = e.target.value;
+      renderHistoryList();
+    });
+  }
+
+  function matchesSearch(item, rawQuery) {
+    var query = rawQuery.trim();
+    if (!query) return true;
+    if (item.merchantName.toLowerCase().indexOf(query.toLowerCase()) !== -1) return true;
+    var m = query.match(/^(\d{4})(?:[.-](\d{1,2}))?(?:[.-](\d{1,2}))?$/);
+    if (m) {
+      var year = Number(m[1]), month = m[2] ? Number(m[2]) : null, day = m[3] ? Number(m[3]) : null;
+      var d = dateFromYmd(item.occurredOn);
+      if (year !== d.getFullYear()) return false;
+      if (month && month !== d.getMonth() + 1) return false;
+      if (day && day !== d.getDate()) return false;
+      return true;
+    }
+    return false;
+  }
+
+  function renderHistoryList() {
+    var all = getSortedTransactions();
+    var filtered = all.filter(function (t) { return matchesSearch(t, historyQuery); });
+
+    var groups = [];
+    filtered.forEach(function (t) {
+      var last = groups[groups.length - 1];
+      if (last && last.dateKey === t.occurredOn) last.items.push(t);
+      else groups.push({ dateKey: t.occurredOn, year: dateFromYmd(t.occurredOn).getFullYear(), items: [t] });
+    });
+
+    var el = document.getElementById("history-list");
+    if (all.length === 0) { el.innerHTML = '<p class="empty-msg">아직 등록된 기록이 없습니다.</p>'; return; }
+    if (groups.length === 0) { el.innerHTML = '<p class="empty-msg">검색 결과가 없습니다.</p>'; return; }
+
+    el.innerHTML = groups.map(function (g, index) {
+      var isNewYear = index === 0 || groups[index - 1].year !== g.year;
+      return (
+        '<section style="margin-bottom:24px;" class="' + (isNewYear && index > 0 ? "year-sep" : "") + '">' +
+          '<h3 class="section-title">' + formatDateHeading(g.items[0].occurredOn) + "</h3>" +
+          '<div class="list" style="margin-top:12px;">' +
+            g.items.map(function (t) {
+              var kind = t.sources[0] ? t.sources[0].kind : "manual";
+              return (
+                '<button class="list-row clickable" data-open-detail="' + t.id + '">' +
+                  '<div class="row-left">' +
+                    '<span class="icon-badge">' + (KIND_ICON[kind] || "✍️") + "</span>" +
+                    '<div><p class="name">' + escapeHtml(t.merchantName) + "</p></div>" +
+                  "</div>" +
+                  '<span class="row-amount">' + formatWon(t.amount) + "</span>" +
+                "</button>"
+              );
+            }).join("") +
+          "</div>" +
+        "</section>"
+      );
+    }).join("");
+  }
+
+  // =======================================================================
+  // TRANSACTION DETAIL — /history/[id]
+  // =======================================================================
+  function renderDetail(id) {
+    var t = transactions.find(function (x) { return x.id === id; });
+    var hero = document.getElementById("detail-hero");
+    var body = document.getElementById("detail-body");
+
+    if (!t) {
+      hero.innerHTML = '<div class="page-hero"><a class="back-link-white" href="#/history">&lt; 뒤로</a></div>';
+      body.innerHTML = '<p class="empty-msg">거래를 찾을 수 없습니다.</p>';
+      return;
+    }
+
+    hero.innerHTML =
+      '<div class="page-hero">' +
+        '<a class="back-link-white" href="#/history">&lt; 뒤로</a>' +
+        '<h1 style="margin-top:16px; font-size:20px;">' + escapeHtml(t.merchantName) + "</h1>" +
+        '<p style="margin-top:4px; font-size:14px; color:rgba(255,255,255,0.85);">' + formatDateHeading(t.occurredOn) + (t.occurredTime ? " " + t.occurredTime : "") + "</p>" +
+        '<p class="total" style="font-size:30px; margin-top:16px;">' + formatWon(t.amount) + "</p>" +
+      "</div>";
+
+    var images = t.sources.filter(function (s) { return s.isImage && s.filePath; });
+
+    var imagesHtml = images.length === 0
+      ? '<p class="empty-msg">원본 이미지가 없습니다.</p>'
+      : '<div class="image-row" id="detail-image-row">' + images.map(function (img, i) {
+          return '<img class="image-thumb" src="' + img.filePath + '" data-img-index="' + i + '" alt="' + escapeHtml(t.merchantName) + ' 원본 자료" />';
+        }).join("") + "</div>";
+
+    var lineItemsHtml = t.lineItems.length === 0
+      ? '<p class="empty-msg">품목 정보가 없습니다.</p>'
+      : '<div class="li-table">' +
+          '<div class="li-head"><span>상품명</span><span>수량</span><span>단가</span><span>금액</span></div>' +
+          t.lineItems.map(function (li) {
+            return '<div class="li-row"><span class="n">' + escapeHtml(li.name) + '</span><span class="dash">-</span><span class="dash">-</span><span class="a">' + formatWon(li.amount) + "</span></div>";
+          }).join("") +
+        "</div>";
+
+    body.innerHTML =
+      '<div class="btn-row">' +
+        '<a class="btn-outline" href="#/history/' + t.id + '/edit">수정</a>' +
+        '<button type="button" class="btn-danger" id="detail-delete-btn" data-tx-id="' + t.id + '">삭제</button>' +
+      "</div>" +
+      "<section>" +
+        '<h2 class="section-title">원본 자료</h2>' + imagesHtml +
+      "</section>" +
+      "<section>" +
+        '<h2 class="section-title">품목</h2>' + lineItemsHtml +
+      "</section>";
+
+    var imgList = images;
+    document.querySelectorAll("#detail-image-row .image-thumb").forEach(function (thumb) {
+      thumb.addEventListener("click", function () {
+        var idx = Number(thumb.getAttribute("data-img-index"));
+        openImageModal(imgList[idx].filePath, t.merchantName);
+      });
+    });
+
+    var deleteBtn = document.getElementById("detail-delete-btn");
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", function () {
+        if (!window.confirm("이 거래를 삭제할까요?")) return;
+        var txId = Number(deleteBtn.getAttribute("data-tx-id"));
+        transactions = transactions.filter(function (x) { return x.id !== txId; });
+        navigate("#/history");
+      });
+    }
+  }
+
+  function openImageModal(src, alt) {
+    var modal = document.createElement("div");
+    modal.className = "image-modal";
+    modal.innerHTML = '<button type="button" class="modal-close" aria-label="닫기">&times;</button><img src="' + src + '" alt="' + escapeHtml(alt) + ' 확대 이미지" />';
+    modal.addEventListener("click", function () { modal.remove(); });
+    modal.querySelector("img").addEventListener("click", function (e) { e.stopPropagation(); });
+    modal.querySelector(".modal-close").addEventListener("click", function () { modal.remove(); });
+    document.getElementById("phone-screen").appendChild(modal);
+  }
+
+  // =======================================================================
+  // EDIT — /history/[id]/edit (날짜/시간/사용처/금액만 수정, 원본·품목은 그대로)
+  // =======================================================================
+  function renderEdit(id) {
+    var t = transactions.find(function (x) { return x.id === id; });
+    var el = document.getElementById("edit-body");
+    if (!t) { el.innerHTML = '<p class="empty-msg">거래를 찾을 수 없습니다.</p>'; return; }
+
+    el.innerHTML =
+      '<a class="back-link" href="#/history/' + t.id + '">&lt; 취소</a>' +
+      "<h1>거래 수정</h1>" +
+      '<form class="form" id="edit-form" data-tx-id="' + t.id + '">' +
+        '<div class="field"><label for="e-date">날짜</label><input id="e-date" name="occurredOn" type="date" value="' + t.occurredOn + '" required /></div>' +
+        '<div class="field"><label for="e-time">시간 (선택)</label><input id="e-time" name="occurredTime" type="time" value="' + (t.occurredTime || "") + '" /></div>' +
+        '<div class="field"><label for="e-merchant">사용처</label><input id="e-merchant" name="merchantName" type="text" value="' + escapeHtml(t.merchantName) + '" required /></div>' +
+        '<div class="field"><label for="e-amount">금액</label><input id="e-amount" name="amount" type="number" inputmode="numeric" min="1" step="1" value="' + t.amount + '" required /></div>' +
+        '<div class="btn-row">' +
+          '<a class="btn-outline" href="#/history/' + t.id + '">취소</a>' +
+          '<button type="submit" class="btn-dark">저장</button>' +
+        "</div>" +
+      "</form>";
+  }
+
+  document.addEventListener("submit", function (e) {
+    if (e.target && e.target.id === "edit-form") {
+      e.preventDefault();
+      var form = e.target;
+      var txId = Number(form.getAttribute("data-tx-id"));
+      var t = transactions.find(function (x) { return x.id === txId; });
+      if (!t) return;
+      var fd = new FormData(form);
+      var occurredOn = fd.get("occurredOn");
+      var occurredTime = fd.get("occurredTime") || null;
+      var merchantName = (fd.get("merchantName") || "").toString().trim();
+      var amount = parseInt(fd.get("amount"), 10);
+      if (!occurredOn || !merchantName || !Number.isFinite(amount) || amount <= 0) return;
+      t.occurredOn = occurredOn;
+      t.occurredTime = occurredTime;
+      t.merchantName = merchantName;
+      t.amount = amount;
+      navigate("#/history/" + txId);
+    }
+  });
+
+  // =======================================================================
+  // MONTHLY
+  // =======================================================================
+  function renderMonthly() {
+    var now = new Date();
+    document.getElementById("monthly-heading").textContent = "이번 달 · " + now.getFullYear() + "년 " + (now.getMonth() + 1) + "월";
+
+    var totalSpent = getCurrentMonthTotal();
+    var lastMonthTotal = getLastMonthTotal();
+    document.getElementById("monthly-total").textContent = formatWon(totalSpent);
+
+    var compareEl = document.getElementById("monthly-compare");
+    if (lastMonthTotal === null) {
+      compareEl.textContent = "지난달 지출 내역이 없습니다";
+    } else if (totalSpent === lastMonthTotal) {
+      compareEl.textContent = "지난달과 지출이 같습니다";
+    } else {
+      var diffLabel = totalSpent > lastMonthTotal ? "더" : "덜";
+      compareEl.textContent = "지난달보다 " + formatWon(Math.abs(totalSpent - lastMonthTotal)) + " " + diffLabel + " 사용";
+    }
+
+    var merchants = getTopMerchantsThisMonth(3);
+    document.getElementById("monthly-merchants").innerHTML = merchants.length === 0
+      ? '<p class="empty-msg">아직 기록이 없어요</p>'
+      : merchants.map(function (m, i) {
+          return (
+            '<div class="list-row">' +
+              '<div class="row-left"><span class="rank-badge violet">' + (i + 1) + "</span>" +
+                '<div><p class="name">' + escapeHtml(m.merchantName) + '</p><p class="meta">' + m.count + "건</p></div></div>" +
+              '<span class="row-amount">' + formatWon(m.totalAmount) + "</span>" +
+            "</div>"
+          );
+        }).join("");
+
+    var expenses = getTopExpensesThisMonth(3);
+    document.getElementById("monthly-expenses").innerHTML = expenses.length === 0
+      ? '<p class="empty-msg">아직 기록이 없어요</p>'
+      : expenses.map(function (e, i) {
+          return (
+            '<div class="list-row">' +
+              '<div class="row-left"><span class="rank-badge orange">' + (i + 1) + "</span>" +
+                '<div><p class="name">' + escapeHtml(e.merchantName) + '</p><p class="meta">' + formatDateShort(e.occurredOn) + "</p></div></div>" +
+              '<span class="row-amount">' + formatWon(e.amount) + "</span>" +
+            "</div>"
+          );
+        }).join("");
+  }
+
+  // =======================================================================
+  // WRITE — 글쓰기로 등록 (시간 입력 없음: 최신 원본에서 제거됨)
+  // =======================================================================
   var writeForm = document.getElementById("write-form");
   var writeError = document.getElementById("write-error");
 
@@ -803,7 +922,6 @@
     e.preventDefault();
     var fd = new FormData(writeForm);
     var occurredOn = fd.get("occurredOn") || ymd(new Date());
-    var occurredTime = fd.get("occurredTime") || null;
     var merchantName = (fd.get("merchantName") || "").toString().trim();
     var amount = parseInt(fd.get("amount"), 10);
     var memo = (fd.get("memo") || "").toString().trim() || null;
@@ -817,23 +935,21 @@
     transactions.push({
       id: nextId++,
       occurredOn: occurredOn,
-      occurredTime: occurredTime,
+      occurredTime: null,
       merchantName: merchantName,
       amount: amount,
       memo: memo,
-      kind: "manual",
-      rawText: memo,
+      sources: [{ id: nextSourceId++, kind: "manual", filePath: null, isImage: false }],
       lineItems: [],
     });
 
     resetWriteForm();
-    showToast("등록되었습니다");
     navigate("#/history");
   });
 
-  // ---------------------------------------------------------------------
+  // =======================================================================
   // Router
-  // ---------------------------------------------------------------------
+  // =======================================================================
   var screens = {};
   document.querySelectorAll(".screen").forEach(function (s) { screens[s.getAttribute("data-route")] = s; });
   var navItems = document.querySelectorAll(".nav-item");
@@ -845,6 +961,8 @@
     if (hash === "/monthly") return { name: "monthly" };
     if (hash === "/ai") return { name: "ai" };
     if (hash === "/write") return { name: "write" };
+    var mEdit = hash.match(/^\/history\/(\d+)\/edit$/);
+    if (mEdit) return { name: "edit", id: parseInt(mEdit[1], 10) };
     var m = hash.match(/^\/history\/(\d+)$/);
     if (m) return { name: "detail", id: parseInt(m[1], 10) };
     return { name: "home" };
@@ -853,19 +971,15 @@
   function render() {
     var route = routeFromHash();
     Object.keys(screens).forEach(function (key) { screens[key].classList.toggle("active", key === route.name); });
-
-    navItems.forEach(function (item) {
-      var target = item.getAttribute("data-nav");
-      item.classList.toggle("active", target === route.name);
-    });
+    navItems.forEach(function (item) { item.classList.toggle("active", item.getAttribute("data-nav") === route.name); });
 
     if (route.name === "home") renderHome();
     else if (route.name === "history") renderHistory();
     else if (route.name === "monthly") renderMonthly();
     else if (route.name === "detail") renderDetail(route.id);
+    else if (route.name === "edit") renderEdit(route.id);
     else if (route.name === "write") resetWriteForm();
 
-    document.getElementById("phone-screen").scrollTop = 0;
     var activeScreen = screens[route.name];
     if (activeScreen) activeScreen.scrollTop = 0;
   }
@@ -876,17 +990,8 @@
   }
 
   document.addEventListener("click", function (e) {
-    var backBtn = e.target.closest("[data-nav]");
-    if (backBtn && backBtn.tagName === "BUTTON") {
-      e.preventDefault();
-      navigate(backBtn.getAttribute("data-nav") === "home" ? "#/" : "#/" + backBtn.getAttribute("data-nav"));
-      return;
-    }
     var detailBtn = e.target.closest("[data-open-detail]");
-    if (detailBtn) {
-      e.preventDefault();
-      navigate("#/history/" + detailBtn.getAttribute("data-open-detail"));
-    }
+    if (detailBtn) { e.preventDefault(); navigate("#/history/" + detailBtn.getAttribute("data-open-detail")); }
   });
 
   window.addEventListener("hashchange", render);
