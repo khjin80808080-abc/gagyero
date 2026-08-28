@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/app/lib/prisma";
 import ReceiptImageViewer from "@/app/components/ReceiptImageViewer";
+import ConfirmSubmitButton from "@/app/components/ConfirmSubmitButton";
+import { deleteTransaction } from "@/app/history/[id]/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -77,6 +79,26 @@ export default async function TransactionDetail({
       </section>
 
       <div className="flex flex-col gap-6 px-5 pt-6 pb-8">
+        <div className="flex gap-3">
+          <Link
+            href={`/history/${transaction.id}/edit`}
+            className="flex-1 rounded-2xl border border-neutral-200 py-3 text-center text-sm font-semibold text-neutral-700 active:bg-neutral-100"
+          >
+            수정
+          </Link>
+          <form
+            action={deleteTransaction.bind(null, id)}
+            className="flex-1"
+          >
+            <ConfirmSubmitButton
+              confirmMessage="이 거래를 삭제할까요?"
+              className="w-full rounded-2xl bg-red-50 py-3 text-sm font-semibold text-red-600 active:bg-red-100"
+            >
+              삭제
+            </ConfirmSubmitButton>
+          </form>
+        </div>
+
         <section>
           <h2 className="text-sm font-semibold text-neutral-500">
             원본 자료
