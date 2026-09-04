@@ -59,11 +59,11 @@ export default function WorkerHome() {
   if (!myWorker) {
     return (
       <div className="px-5 pt-6 pb-6 animate-fade-in">
-        <p className="text-sm text-navy-400 font-medium">해본사람</p>
+        <p className="text-sm text-navy-400 font-medium">베테랑</p>
         <h1 className="text-xl font-extrabold text-navy-800 mt-1 leading-snug">
-          일을 찾지 마세요.
+          일감을 찾아다니지 마세요.
           <br />
-          AI가 먼저 찾아드립니다.
+          AI가 내 경력에 맞는 일을 찾아 먼저 알려드립니다.
         </h1>
         <button
           onClick={() => navigate("/worker/profile/new")}
@@ -89,7 +89,7 @@ export default function WorkerHome() {
     <div className="px-5 pt-6 pb-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-navy-400 font-medium">해본사람</p>
+          <p className="text-sm text-navy-400 font-medium">베테랑</p>
           <h1 className="text-xl font-extrabold text-navy-800 mt-1">
             {myWorker.name}님, 안녕하세요 👋
           </h1>

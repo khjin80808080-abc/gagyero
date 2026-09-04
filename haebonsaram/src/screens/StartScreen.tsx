@@ -22,19 +22,22 @@ export default function StartScreen() {
           <ShieldCheck size={32} className="text-teal-300" />
         </div>
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">해본사람</h1>
-          <p className="mt-2 text-sm text-navy-200 leading-relaxed">
-            일을 찾지 마세요.
+          <h1 className="text-3xl font-extrabold tracking-tight">베테랑</h1>
+          <p className="mt-1.5 text-xs text-teal-300 font-semibold">
+            내 시간과 경력은 소중하니까, 나에게 맞는 일만.
+          </p>
+          <p className="mt-3 text-sm text-navy-200 leading-relaxed">
+            일감을 찾아다니지 마세요.
             <br />
-            내 경력과 맞는 일이 생기면
+            AI가 내 경력에 맞는 일을 찾아
             <br />
-            AI가 먼저 알려드립니다.
+            먼저 알려드립니다.
           </p>
         </div>
 
         <div className="mt-2 flex items-center gap-1.5 text-teal-300 text-xs font-semibold bg-white/5 px-3 py-1.5 rounded-full">
           <Sparkles size={14} />
-          <span>검색·공고·경쟁 없이, AI가 찾고 판단해서 5명만 연결</span>
+          <span>AI는 찾고, 베테랑은 선택합니다.</span>
         </div>
       </div>
 
